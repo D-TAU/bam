@@ -1,9 +1,8 @@
 #include "Account.h"
 
 Account::Account(double ibal)
+	: m_Balance(ibal)
 {
-    /*setup initial account balance*/
-    m_balance = ibal;
 }
 
 Account::~Account()
@@ -14,9 +13,9 @@ Account::~Account()
 Account::OpStatus Account::withdraw(double amount)
 {
     /*do not withdraw more than you have*/
-    if(amount < m_balance)
+    if(amount < m_Balance)
     {
-        m_balance -= amount;
+    	m_Balance -= amount;
         return SUCCESS;
     }
     else
@@ -25,6 +24,6 @@ Account::OpStatus Account::withdraw(double amount)
 
 Account::OpStatus Account::deposit(double amount)
 {
-    m_balance += amount;
+	m_Balance += amount;
     return SUCCESS;
 }

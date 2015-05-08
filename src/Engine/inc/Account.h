@@ -1,18 +1,24 @@
 #ifndef ACCOUNT_H
 #define ACCOUNT_H
 
-
 class Account
 {
 public:
-    Account(double ibal);
+    enum OpStatus
+    {
+    	FAILURE,
+    	SUCCESS
+    };
+
+public:
+    Account(double ibal = 0);
     virtual ~Account();
 
-    enum OpStatus {FAILURE, SUCCESS};
     virtual OpStatus withdraw(double amount);
     virtual OpStatus deposit(double amount);
-protected:
-    double m_balance;
+
+private:
+    double m_Balance;
 };
 
 #endif // ACCOUNT_H

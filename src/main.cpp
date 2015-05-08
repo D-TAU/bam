@@ -1,7 +1,8 @@
-#include <iostream>
+#include "Application.h"
+
 int main(int argc, char **argv)
 {
-    std::cout << "Privet chuvak!" << std::endl;
-    return 0;
+	Application app;
+	int ret = app.run(argc, argv);
+    return ret;
 }
-
