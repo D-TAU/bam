@@ -3,6 +3,7 @@
 #define BamApplicatin_h
 
 #include "Account.h"
+#include "Window.h"
 #include <app.h>
 
 class Application
@@ -13,6 +14,8 @@ public:
 
 	Account &getEngine();
 	const Account &getEngine() const;
+
+	Window &getWindow();
 
 	int run(int argc, char *argv[]);
 	void exit();
@@ -26,6 +29,7 @@ private:
 
 private:
 	Account m_Account;
+	Window *m_pWindow;
 };
 
 #endif // BamApplicatin_h

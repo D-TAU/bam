@@ -4,6 +4,7 @@
 
 Application::Application()
 	: m_Account()
+	, m_pWindow(nullptr)
 {
 	BAM_LOG("App create");
 }
@@ -70,14 +71,26 @@ void Application::exit()
 	ui_app_exit();
 }
 
+Window &Application::getWindow()
+{
+	return *m_pWindow;
+}
+
 bool Application::onAppCreate()
 {
+	BAM_LOG("App create");
+
+	m_pWindow = new Window;
+	m_pWindow->show();
+
 	return true;
 }
 
 void Application::onAppTerminate()
 {
 	BAM_LOG("App terminate");
+
+	m_pWindow->destroy();
 }
 
 void Application::onAppPause()

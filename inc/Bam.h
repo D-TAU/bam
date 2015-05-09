@@ -18,6 +18,7 @@
 
 #define EDJ_FILE "edje/bam.edj"
 #define GRP_MAIN "main"
+#define APP_NAME "Bank account manager"
 
 #define BAM_LOG(fmt, arg...) dlog_print(DLOG_INFO, LOG_TAG, fmt, ##arg)
 #define BAM_LOG_ERROR(fmt, arg...) dlog_print(DLOG_ERROR, LOG_TAG, fmt, ##arg)
