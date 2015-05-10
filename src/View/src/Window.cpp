@@ -45,3 +45,18 @@ Evas_Object *Window::getContent() const
 {
 	 return elm_object_part_content_get(m_pConform, "elm.swallow.content");
 }
+
+Evas_Object *Window::getWindowEo() const
+{
+	return m_pWin;
+}
+
+Evas_Object *Window::getConformEo() const
+{
+	return m_pConform;
+}
+
+Evas_Object *Window::getBgEo() const
+{
+	return m_pBg;
+}

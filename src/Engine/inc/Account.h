@@ -16,6 +16,7 @@ public:
 
     virtual OpStatus withdraw(double amount);
     virtual OpStatus deposit(double amount);
+    virtual double getBalance() const;
 
 private:
     double m_Balance;

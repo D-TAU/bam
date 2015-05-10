@@ -27,3 +27,8 @@ Account::OpStatus Account::deposit(double amount)
 	m_Balance += amount;
     return SUCCESS;
 }
+
+double Account::getBalance() const
+{
+	return m_Balance;
+}

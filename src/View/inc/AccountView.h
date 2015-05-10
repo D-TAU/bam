@@ -5,8 +5,6 @@
 #include "View.h"
 #include <string>
 
-class IAccountViewListener;
-
 class AccountView
 	: public View
 {
@@ -19,12 +17,14 @@ public:
 
 public:
 	AccountView(Evas_Object *parent);
-	void setListener(IAccountViewListener *listener);
 	void setCurrentBalance(const std::string &str);
 	std::string getInputMoney() const;
 
-private:
+protected:
+	virtual void onButtonClicked(AccountView &view, AccountView::ButtonId buttonId) {};
 	virtual ~AccountView();
+
+private:
 	void create(Evas_Object *parent);
 	Evas_Object *createCurrentBalance(Evas_Object *parent);
 	Evas_Object *createEntry(Evas_Object *parent);
@@ -36,14 +36,7 @@ private:
 private:
 	Evas_Object *m_pMoneyEntry;
 	Evas_Object *m_pCurrrentBalanceLabel;;
-	IAccountViewListener *m_pListener;
 };
 
-class IAccountViewListener
-{
-public:
-	virtual ~IAccountViewListener() {}
-	virtual void onButtonClicked(AccountView &view, AccountView::ButtonId buttonId) {};
-};
 
 #endif /* ACCOUNTVIEW_H_ */

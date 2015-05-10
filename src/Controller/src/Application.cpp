@@ -1,11 +1,10 @@
 
 #include "Bam.h"
 #include "Application.h"
-#include "AccountView.h"
+#include "AccountController.h"
 
 Application::Application()
-	: m_Account()
-	, m_pWindow(nullptr)
+	: m_pWindow(nullptr)
 {
 	BAM_LOG("App create");
 }
@@ -56,16 +55,6 @@ int Application::run(int argc, char *argv[])
 	return ret;
 }
 
-Account &Application::getEngine()
-{
-	return m_Account;
-}
-
-const Account &Application::getEngine() const
-{
-	return m_Account;
-}
-
 void Application::exit()
 {
 	BAM_LOG("App request exit");
@@ -84,11 +73,8 @@ bool Application::onAppCreate()
 	m_pWindow = new Window;
 	m_pWindow->show();
 
-	AccountView *accountView = new AccountView(*m_pWindow);
-	accountView->show();
-	accountView->expand();
-
-	m_pWindow->setContent(*accountView);
+	AccountController *account = new AccountController(*this, m_pWindow->getConformEo());
+	m_pWindow->setContent(account->getEo());
 
 	return true;
 }

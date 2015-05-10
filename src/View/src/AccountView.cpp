@@ -17,18 +17,12 @@ namespace
 AccountView::AccountView(Evas_Object *parent)
 	: m_pMoneyEntry(nullptr)
 	, m_pCurrrentBalanceLabel(nullptr)
-	, m_pListener(nullptr)
 {
 	create(parent);
 }
 
 AccountView::~AccountView()
 {
-}
-
-void AccountView::setListener(IAccountViewListener *listener)
-{
-	m_pListener = listener;
 }
 
 void AccountView::create(Evas_Object *parent)
@@ -39,11 +33,11 @@ void AccountView::create(Evas_Object *parent)
 	elm_box_horizontal_set(mainBox, false);
 
 	Evas_Object *balance = createCurrentBalance(mainBox);
-	m_pMoneyEntry = createEntry(mainBox);
+	Evas_Object *entry = createEntry(mainBox);
 	Evas_Object *buttons = createButtons(mainBox);
 
 	elm_box_pack_end(mainBox, balance);
-	elm_box_pack_end(mainBox, m_pMoneyEntry);
+	elm_box_pack_end(mainBox, entry);
 	elm_box_pack_end(mainBox, buttons);
 }
 
@@ -84,14 +78,14 @@ Evas_Object *AccountView::createEntry(Evas_Object *parent)
 	evas_object_color_set(bg, 140, 150, 170, 200);
 	evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
-	Evas_Object *entry = elm_entry_add(layout);
-	elm_entry_single_line_set(entry, true);
-	evas_object_show(entry);
-	elm_entry_text_style_user_push(entry, "DEFAULT='font_size=36'");
-	elm_object_part_text_set(entry, "guide", applyFontSize("Input...").c_str());
+	m_pMoneyEntry = elm_entry_add(layout);
+	elm_entry_single_line_set(m_pMoneyEntry, true);
+	evas_object_show(m_pMoneyEntry);
+	elm_entry_text_style_user_push(m_pMoneyEntry, "DEFAULT='font_size=36'");
+	elm_object_part_text_set(m_pMoneyEntry, "guide", applyFontSize("Input...").c_str());
 
 	elm_object_part_content_set(layout, "elm.swallow.bg", bg);
-	elm_layout_content_set(layout, "elm.swallow.content", entry);
+	elm_layout_content_set(layout, "elm.swallow.content", m_pMoneyEntry);
 
 	return layout;
 }
@@ -149,12 +143,10 @@ std::string AccountView::getInputMoney() const
 
 void AccountView::onWithdrawButtonClicked(Evas_Object *btn, void *eventInfo)
 {
-	if(m_pListener)
-		m_pListener->onButtonClicked(*this, WithdrawButtonId);
+	onButtonClicked(*this, WithdrawButtonId);
 }
 
 void AccountView::onDepositButtonClicked(Evas_Object *btn, void *eventInfo)
 {
-	if(m_pListener)
-		m_pListener->onButtonClicked(*this, DepositDuttonId);
+	onButtonClicked(*this, DepositDuttonId);
 }

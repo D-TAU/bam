@@ -6,7 +6,7 @@
 class View
 {
 public:
-	inline Evas_Object *getEo();
+	inline Evas_Object *getEo() const;
 	inline operator Evas_Object*() const;
 
 	void expand();
@@ -31,7 +31,7 @@ private:
 	Evas_Object *m_pEo;
 };
 
-inline Evas_Object *View::getEo()
+inline Evas_Object *View::getEo() const
 {
 	return m_pEo;
 }
