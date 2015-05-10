@@ -1,6 +1,7 @@
 
 #include "Bam.h"
 #include "Application.h"
+#include "AccountView.h"
 
 Application::Application()
 	: m_Account()
@@ -82,6 +83,12 @@ bool Application::onAppCreate()
 
 	m_pWindow = new Window;
 	m_pWindow->show();
+
+	AccountView *accountView = new AccountView(*m_pWindow);
+	accountView->show();
+	accountView->expand();
+
+	m_pWindow->setContent(*accountView);
 
 	return true;
 }

@@ -7,3 +7,4 @@ obj
 .sign
 .rds_delta
 .sdk_delta.info
+crash-info/

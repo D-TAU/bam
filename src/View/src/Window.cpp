@@ -19,6 +19,7 @@ void Window::create()
 {
 	m_pWin = elm_win_add(NULL, APP_NAME, ELM_WIN_BASIC);
 	elm_win_conformant_set(m_pWin, EINA_TRUE);
+	elm_win_indicator_mode_set(m_pWin, ELM_WIN_INDICATOR_SHOW);
 	setEo(m_pWin);
 
 	m_pConform = elm_conformant_add(m_pWin);
