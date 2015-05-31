@@ -1,10 +1,6 @@
 Debug
-bin
-obj
-*.cbp
-*.layout
-*.depend
 .sign
 .rds_delta
 .sdk_delta.info
 crash-info/
+/SA_Report
