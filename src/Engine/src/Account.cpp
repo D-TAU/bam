@@ -1,7 +1,7 @@
 #include "Account.h"
 
-Account::Account(double ibal)
-	: m_Balance(ibal)
+Account::Account(double ibal, double irate)
+	: m_Balance(ibal), m_InterestsRate(irate)
 {
 }
 
@@ -26,6 +26,11 @@ Account::OpStatus Account::deposit(double amount)
 {
 	m_Balance += amount;
     return SUCCESS;
+}
+
+double Account::getInterestsRate() const
+{
+	return m_InterestsRate;
 }
 
 double Account::getBalance() const

@@ -16,7 +16,8 @@ namespace
 
 AccountView::AccountView(Evas_Object *parent)
 	: m_pMoneyEntry(nullptr)
-	, m_pCurrrentBalanceLabel(nullptr)
+	, m_pCurrentBalanceLabel(nullptr)
+	, m_pInterestsRateLabel(nullptr)
 {
 	create(parent);
 }
@@ -33,10 +34,12 @@ void AccountView::create(Evas_Object *parent)
 	elm_box_horizontal_set(mainBox, false);
 
 	Evas_Object *balance = createCurrentBalance(mainBox);
+	Evas_Object *interests = createInterestsRate(mainBox);
 	Evas_Object *entry = createEntry(mainBox);
 	Evas_Object *buttons = createButtons(mainBox);
 
 	elm_box_pack_end(mainBox, balance);
+	elm_box_pack_end(mainBox, interests);
 	elm_box_pack_end(mainBox, entry);
 	elm_box_pack_end(mainBox, buttons);
 }
@@ -54,11 +57,33 @@ Evas_Object *AccountView::createCurrentBalance(Evas_Object *parent)
 	elm_object_text_set(label, applyFontSize("Current balance: ").c_str());
 	evas_object_show(label);
 
-	m_pCurrrentBalanceLabel = elm_label_add(box);
-	evas_object_show(m_pCurrrentBalanceLabel);
+	m_pCurrentBalanceLabel = elm_label_add(box);
+	evas_object_show(m_pCurrentBalanceLabel);
 
 	elm_box_pack_end(box, label);
-	elm_box_pack_end(box, m_pCurrrentBalanceLabel);
+	elm_box_pack_end(box, m_pCurrentBalanceLabel);
+
+	return box;
+}
+
+Evas_Object *AccountView::createInterestsRate(Evas_Object *parent)
+{
+	Evas_Object *box = elm_box_add(parent);
+	evas_object_show(box);
+	elm_box_homogeneous_set(box, false);
+	elm_box_horizontal_set(box, true);
+	evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, 0.5);
+
+	Evas_Object *label = elm_label_add(box);
+	elm_object_text_set(label, applyFontSize("Interests rate: ").c_str());
+	evas_object_show(label);
+
+	m_pInterestsRateLabel = elm_label_add(box);
+	evas_object_show(m_pInterestsRateLabel);
+
+	elm_box_pack_end(box, label);
+	elm_box_pack_end(box, m_pInterestsRateLabel);
 
 	return box;
 }
@@ -123,7 +148,14 @@ void AccountView::setCurrentBalance(const std::string &str)
 {
 	std::ostringstream ss;
 	ss << "<color=#72ea79><b>" << str << "</b></color>";
-	elm_object_text_set(m_pCurrrentBalanceLabel, applyFontSize(ss.str()).c_str());
+	elm_object_text_set(m_pCurrentBalanceLabel, applyFontSize(ss.str()).c_str());
+}
+
+void AccountView::setInterestsRate(const std::string &str)
+{
+	std::ostringstream ss;
+	ss << "<color=#72ea79><b>" << str << "</b></color>";
+	elm_object_text_set(m_pInterestsRateLabel, applyFontSize(ss.str()).c_str());
 }
 
 std::string AccountView::getInputMoney() const

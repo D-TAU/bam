@@ -31,8 +31,13 @@ Evas_Object *AccountController::getEo() const
 void AccountController::updateView()
 {
 	std::ostringstream ss;
+
 	ss << m_Account.getBalance();
 	setCurrentBalance(ss.str());
+
+	ss.str("");
+	ss << m_Account.getInterestsRate();
+		setInterestsRate(ss.str());
 }
 
 double AccountController::getInputMoney() const

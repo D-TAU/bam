@@ -18,6 +18,7 @@ public:
 public:
 	AccountView(Evas_Object *parent);
 	void setCurrentBalance(const std::string &str);
+	void setInterestsRate(const std::string &str);
 	std::string getInputMoney() const;
 
 protected:
@@ -27,6 +28,7 @@ protected:
 private:
 	void create(Evas_Object *parent);
 	Evas_Object *createCurrentBalance(Evas_Object *parent);
+	Evas_Object *createInterestsRate(Evas_Object *parent);
 	Evas_Object *createEntry(Evas_Object *parent);
 	Evas_Object *createButtons(Evas_Object *parent);
 
@@ -35,7 +37,8 @@ private:
 
 private:
 	Evas_Object *m_pMoneyEntry;
-	Evas_Object *m_pCurrrentBalanceLabel;;
+	Evas_Object *m_pCurrentBalanceLabel;
+	Evas_Object *m_pInterestsRateLabel;
 };
 
 
