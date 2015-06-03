@@ -73,7 +73,7 @@ bool Application::onAppCreate()
 	m_pWindow = new Window;
 	m_pWindow->show();
 
-	AccountController *account = new AccountController(*this, m_pWindow->getConformEo());
+	AccountController *account = new AccountController(*this, m_pWindow->getNfEo());
 	m_pWindow->setContent(account->getEo());
 
 	return true;

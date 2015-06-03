@@ -12,6 +12,7 @@ public:
 	Evas_Object *getWindowEo() const;
 	Evas_Object *getConformEo() const;
 	Evas_Object *getBgEo() const;
+	Evas_Object *getNfEo() const;
 	void setContent(Evas_Object *content);
 	Evas_Object *getContent() const;
 
@@ -23,6 +24,7 @@ private:
 	Evas_Object *m_pWin;
 	Evas_Object *m_pConform;
 	Evas_Object *m_pBg;
+	Evas_Object *m_pNf;
 };
 
 #endif /* WINDOW_H_ */
