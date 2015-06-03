@@ -18,6 +18,7 @@ AccountView::AccountView(Evas_Object *parent)
 	: m_pMoneyEntry(nullptr)
 	, m_pCurrentBalanceLabel(nullptr)
 	, m_pInterestsRateLabel(nullptr)
+	, m_pNaviFrame(parent)
 {
 	create(parent);
 }
@@ -35,13 +36,15 @@ void AccountView::create(Evas_Object *parent)
 
 	Evas_Object *balance = createCurrentBalance(mainBox);
 	Evas_Object *interests = createInterestsRate(mainBox);
-	Evas_Object *entry = createEntry(mainBox);
-	Evas_Object *buttons = createButtons(mainBox);
+	//Evas_Object *entry = createEntry(mainBox);
+	//Evas_Object *buttons = createButtons(mainBox);
+	Evas_Object *tbutton = createTransactionButton(mainBox);
 
 	elm_box_pack_end(mainBox, balance);
 	elm_box_pack_end(mainBox, interests);
-	elm_box_pack_end(mainBox, entry);
-	elm_box_pack_end(mainBox, buttons);
+	//elm_box_pack_end(mainBox, entry);
+	elm_box_pack_end(mainBox, tbutton);
+	//elm_box_pack_end(mainBox, buttons);
 }
 
 Evas_Object *AccountView::createCurrentBalance(Evas_Object *parent)
@@ -144,6 +147,18 @@ Evas_Object *AccountView::createButtons(Evas_Object *parent)
 	return box;
 }
 
+Evas_Object *AccountView::createTransactionButton(Evas_Object *parent)
+{
+	Evas_Object *transact = elm_button_add(parent);
+	evas_object_size_hint_align_set(transact, EVAS_HINT_FILL, 0.5);
+	evas_object_size_hint_weight_set(transact, EVAS_HINT_EXPAND, 0.25);
+	evas_object_show(transact);
+	elm_object_text_set(transact, applyFontSize("Transaction").c_str());
+	evas_object_smart_callback_add(transact, "clicked", EVAS_SMART_EVET_CB(AccountView, onTransactButtonClicked), this);
+
+	return transact;
+}
+
 void AccountView::setCurrentBalance(const std::string &str)
 {
 	std::ostringstream ss;
@@ -181,4 +196,32 @@ void AccountView::onWithdrawButtonClicked(Evas_Object *btn, void *eventInfo)
 void AccountView::onDepositButtonClicked(Evas_Object *btn, void *eventInfo)
 {
 	onButtonClicked(*this, DepositDuttonId);
+}
+
+void AccountView::onTransactButtonClicked(Evas_Object *btn, void *eventInfo)
+{
+	Elm_Object_Item * nf_item = elm_naviframe_item_push(m_pNaviFrame,
+			"Transaction", NULL, NULL, NULL, NULL);
+
+	Evas_Object *tview = createTransactionView(nf_item);
+
+	elm_object_item_part_content_set(nf_item, "toolbar", tview);
+}
+
+Evas_Object *AccountView::createTransactionView(Elm_Object_Item *parent)
+{
+	Evas_Object * box = elm_box_add(m_pNaviFrame);
+	evas_object_show(box);
+	elm_box_homogeneous_set(box, false);
+	elm_box_horizontal_set(box, false);
+	evas_object_size_hint_align_set(box, EVAS_HINT_FILL, 0.2);
+	evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
+	Evas_Object *entry = createEntry(box);
+	Evas_Object *buttons = createButtons(box);
+
+	elm_box_pack_end(box, entry);
+	elm_box_pack_end(box, buttons);
+
+	return box;
 }
