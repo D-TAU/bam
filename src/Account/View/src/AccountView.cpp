@@ -132,14 +132,14 @@ Evas_Object *AccountView::createButtons(Evas_Object *parent)
 	evas_object_size_hint_weight_set(withdraw, EVAS_HINT_EXPAND, 0.5);
 	evas_object_show(withdraw);
 	elm_object_text_set(withdraw, applyFontSize("Withdraw").c_str());
-    evas_object_smart_callback_add(withdraw, "clicked", EVAS_SMART_EVET_CB(AccountView, onWithdrawButtonClicked), this);
+    evas_object_smart_callback_add(withdraw, "clicked", EVAS_SMART_CB(AccountView, onWithdrawButtonClicked), this);
 
 	Evas_Object *depos = elm_button_add(box);
 	evas_object_size_hint_align_set(depos, 0.1, 0.5);
 	evas_object_size_hint_weight_set(depos, EVAS_HINT_EXPAND, 0.5);
 	evas_object_show(depos);
 	elm_object_text_set(depos, applyFontSize("Deposit").c_str());
-    evas_object_smart_callback_add(depos, "clicked", EVAS_SMART_EVET_CB(AccountView, onDepositButtonClicked), this);
+    evas_object_smart_callback_add(depos, "clicked", EVAS_SMART_CB(AccountView, onDepositButtonClicked), this);
 
 	elm_box_pack_end(box, withdraw);
 	elm_box_pack_end(box, depos);
@@ -154,7 +154,7 @@ Evas_Object *AccountView::createTransactionButton(Evas_Object *parent)
 	evas_object_size_hint_weight_set(transact, EVAS_HINT_EXPAND, 0.25);
 	evas_object_show(transact);
 	elm_object_text_set(transact, applyFontSize("Transaction").c_str());
-	evas_object_smart_callback_add(transact, "clicked", EVAS_SMART_EVET_CB(AccountView, onTransactButtonClicked), this);
+	evas_object_smart_callback_add(transact, "clicked", EVAS_SMART_CB(AccountView, onTransactButtonClicked), this);
 
 	return transact;
 }
