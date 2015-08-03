@@ -10,7 +10,7 @@ class AccountController
 	: private AccountView
 {
 public:
-	AccountController(Application &app, Evas_Object *parent);
+	AccountController(Application &app, sqlite::database * db, Evas_Object *parent);
 	Evas_Object *getEo() const;
 
 private:

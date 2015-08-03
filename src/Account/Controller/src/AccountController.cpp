@@ -8,10 +8,12 @@
 #include <sstream>
 #include <string>
 
-AccountController::AccountController(Application &app, Evas_Object *parent)
+AccountController::AccountController(Application &app, sqlite::database * db,
+		Evas_Object *parent)
 	: AccountView(parent)
 	, m_App(app)
-	, m_Account(500)
+	//FIXME account initialization
+	, m_Account(db, "MyName", 9, "25", Date("2015-08-03"))
 {
 	eext_object_event_callback_add(getEo(), EEXT_CALLBACK_BACK, EEXT_EVET_CB(AccountController, onHwBackButtonPressed), this);
 	eext_object_event_callback_add(getEo(), EEXT_CALLBACK_MORE, EEXT_EVET_CB(AccountController, onHwMoreButtonPressed), this);
@@ -57,14 +59,16 @@ void AccountController::onButtonClicked(AccountView &view, AccountView::ButtonId
 	{
 		case AccountView::DepositDuttonId:
 		{
-			m_Account.deposit(getInputMoney());
+			//FIXME boilerplate with date
+			m_Account.deposit(Date::today(), getInputMoney());
 			updateView();
 			break;
 		}
 
 		case AccountView::WithdrawButtonId:
 		{
-			m_Account.withdraw(getInputMoney());
+			//FIXME boilerplate with date
+			m_Account.withdraw(Date::today(), getInputMoney());
 			updateView();
 			break;
 		}

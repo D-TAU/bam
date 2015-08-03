@@ -7,6 +7,9 @@
 
 // TODO:
 class AccountManager;
+namespace sqlite {
+    class database;
+};
 
 class Application
 {
@@ -31,6 +34,8 @@ private:
 
 private:
 	Window *m_pWindow;
+	/*accounts database*/
+	sqlite::database * m_db;
 };
 
 #endif // BamApplicatin_h

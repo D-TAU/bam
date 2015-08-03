@@ -5,6 +5,7 @@
 
 Application::Application()
 	: m_pWindow(nullptr)
+	, m_db(nullptr)
 {
 	BAM_LOG("App create");
 }
@@ -73,7 +74,11 @@ bool Application::onAppCreate()
 	m_pWindow = new Window;
 	m_pWindow->show();
 
-	AccountController *account = new AccountController(*this, m_pWindow->getNfEo());
+	//FIXME in-memory database should be replaced by database file
+	m_db = new sqlite::database(":memory:");
+
+	AccountController *account = new AccountController(*this, m_db,
+			m_pWindow->getNfEo());
 	m_pWindow->setContent(account->getEo());
 
 	return true;
@@ -84,6 +89,8 @@ void Application::onAppTerminate()
 	BAM_LOG("App terminate");
 
 	m_pWindow->destroy();
+
+	delete m_db;
 }
 
 void Application::onAppPause()
