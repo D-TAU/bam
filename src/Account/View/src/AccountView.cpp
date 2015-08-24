@@ -18,13 +18,18 @@ AccountView::AccountView(Evas_Object *parent)
 	: m_pMoneyEntry(nullptr)
 	, m_pCurrentBalanceLabel(nullptr)
 	, m_pInterestsRateLabel(nullptr)
-	, m_pNaviFrame(parent)
+	, m_pListener(nullptr)
 {
 	create(parent);
 }
 
 AccountView::~AccountView()
 {
+}
+
+void AccountView::setListener(AccountViewListener * l)
+{
+	m_pListener = l;
 }
 
 void AccountView::create(Evas_Object *parent)
@@ -190,27 +195,25 @@ std::string AccountView::getInputMoney() const
 
 void AccountView::onWithdrawButtonClicked(Evas_Object *btn, void *eventInfo)
 {
-	onButtonClicked(*this, WithdrawButtonId);
+	if(m_pListener)
+		m_pListener->onButtonClicked(*this, WithdrawButtonId);
 }
 
 void AccountView::onDepositButtonClicked(Evas_Object *btn, void *eventInfo)
 {
-	onButtonClicked(*this, DepositDuttonId);
+	if(m_pListener)
+		m_pListener->onButtonClicked(*this, DepositButtonId);
 }
 
 void AccountView::onTransactButtonClicked(Evas_Object *btn, void *eventInfo)
 {
-	Elm_Object_Item * nf_item = elm_naviframe_item_push(m_pNaviFrame,
-			"Transaction", NULL, NULL, NULL, NULL);
-
-	Evas_Object *tview = createTransactionView(nf_item);
-
-	elm_object_item_part_content_set(nf_item, "toolbar", tview);
+	if(m_pListener)
+		m_pListener->onButtonClicked(*this, TransactButtonId);
 }
 
 Evas_Object *AccountView::createTransactionView(Elm_Object_Item *parent)
 {
-	Evas_Object * box = elm_box_add(m_pNaviFrame);
+/*	Evas_Object * box = elm_box_add(m_pNaviFrame);
 	evas_object_show(box);
 	elm_box_homogeneous_set(box, false);
 	elm_box_horizontal_set(box, false);
@@ -223,5 +226,7 @@ Evas_Object *AccountView::createTransactionView(Elm_Object_Item *parent)
 	elm_box_pack_end(box, entry);
 	elm_box_pack_end(box, buttons);
 
-	return box;
+	return box;*/
+
+	return nullptr;
 }

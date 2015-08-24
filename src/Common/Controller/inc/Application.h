@@ -3,11 +3,13 @@
 #define BamApplicatin_h
 
 #include "Window.h"
+#include "NaviFrame.h"
 #include <app.h>
 
 // TODO:
 class AccountManager;
-namespace sqlite {
+namespace sqlite
+{
     class database;
 };
 
@@ -26,16 +28,22 @@ public:
 	void exit();
 
 private:
+	// Application:
 	bool onAppCreate();
 	void onAppTerminate();
 	void onAppPause();
 	void onAppResume();
 	void onAppControl(app_control_h app_control);
 
+	// HW buttons:
+	void onHwBackButtonPressed(Evas_Object *obj, void *event_info);
+	void onHwMoreButtonPressed(Evas_Object *obj, void *event_info);
+
 private:
 	Window *m_pWindow;
+	NaviFrame *m_pNaviFrame;
 	/*accounts database*/
-	sqlite::database * m_db;
+	sqlite::database *m_db;
 };
 
 #endif // BamApplicatin_h

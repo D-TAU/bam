@@ -24,7 +24,6 @@ private:
 	Evas_Object *m_pWin;
 	Evas_Object *m_pConform;
 	Evas_Object *m_pBg;
-	Evas_Object *m_pNf;
 };
 
 #endif /* WINDOW_H_ */

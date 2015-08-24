@@ -5,6 +5,9 @@
 #include "View.h"
 #include <string>
 
+
+class AccountViewListener;
+
 class AccountView
 	: public View
 {
@@ -12,7 +15,8 @@ public:
 	enum ButtonId
 	{
 		WithdrawButtonId,
-		DepositDuttonId
+		DepositButtonId,
+		TransactButtonId
 	};
 
 public:
@@ -20,9 +24,9 @@ public:
 	void setCurrentBalance(const std::string &str);
 	void setInterestsRate(const std::string &str);
 	std::string getInputMoney() const;
+	void setListener(AccountViewListener * l);
 
 protected:
-	virtual void onButtonClicked(AccountView &view, AccountView::ButtonId buttonId) {};
 	virtual ~AccountView();
 
 private:
@@ -32,6 +36,8 @@ private:
 	Evas_Object *createEntry(Evas_Object *parent);
 	Evas_Object *createButtons(Evas_Object *parent);
 	Evas_Object *createTransactionButton(Evas_Object *parent);
+
+	// TODO: delete this shit
 	Evas_Object *createTransactionView(Elm_Object_Item *parent);
 
 	void onWithdrawButtonClicked(Evas_Object *btn, void *eventInfo);
@@ -42,7 +48,14 @@ private:
 	Evas_Object *m_pMoneyEntry;
 	Evas_Object *m_pCurrentBalanceLabel;
 	Evas_Object *m_pInterestsRateLabel;
-	Evas_Object *m_pNaviFrame;
+	AccountViewListener *m_pListener;
+};
+
+class AccountViewListener
+{
+public:
+	virtual ~AccountViewListener() {}
+	virtual void onButtonClicked(AccountView &view, AccountView::ButtonId buttonId) {};
 };
 
 

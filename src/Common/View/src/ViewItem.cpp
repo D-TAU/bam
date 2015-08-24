@@ -20,7 +20,9 @@ ViewItem::~ViewItem()
 void ViewItem::setElmItem(Elm_Object_Item *item)
 {
 	m_pItem = item;
+	elm_object_item_data_set(item, this);
 	elm_object_item_del_cb_set(item, EVAS_SMART_CB(ViewItem, onDel));
+
 }
 
 void ViewItem::onDestroy(ViewItem &item)

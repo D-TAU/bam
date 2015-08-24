@@ -2,9 +2,11 @@
 #include "Bam.h"
 #include "Application.h"
 #include "AccountController.h"
+#include "CallbackAssist.h"
 
 Application::Application()
 	: m_pWindow(nullptr)
+	, m_pNaviFrame(nullptr)
 	, m_db(nullptr)
 {
 	BAM_LOG("App create");
@@ -20,7 +22,6 @@ int Application::run(int argc, char *argv[])
 	BAM_LOG("App run");
 
 	int ret = 0;
-
 	ui_app_lifecycle_callback_s event_callback = {0,};
 
 	event_callback.create = [](void *data)->bool
@@ -71,17 +72,43 @@ bool Application::onAppCreate()
 {
 	BAM_LOG("App create");
 
-	m_pWindow = new Window;
-	m_pWindow->show();
-
 	//FIXME in-memory database should be replaced by database file
 	m_db = new sqlite::database(":memory:");
 
-	AccountController *account = new AccountController(*this, m_db,
-			m_pWindow->getNfEo());
-	m_pWindow->setContent(account->getEo());
+	// Create window:
+	m_pWindow = new Window;
+	m_pWindow->show();
+	eext_object_event_callback_add(*m_pWindow, EEXT_CALLBACK_BACK, EEXT_EVET_CB(Application, onHwBackButtonPressed), this);
+	eext_object_event_callback_add(*m_pWindow, EEXT_CALLBACK_MORE, EEXT_EVET_CB(Application, onHwMoreButtonPressed), this);
+
+	// Create Naviframe:
+	m_pNaviFrame = new NaviFrame(*m_pWindow);
+	m_pNaviFrame->show();
+
+
+	// Create AccountController
+	AccountController *account = new AccountController(*this, m_db, *m_pNaviFrame);
+
+	m_pNaviFrame->push(account);
+	m_pWindow->setContent(*m_pNaviFrame);
 
 	return true;
+}
+
+void Application::onHwBackButtonPressed(Evas_Object *obj, void *event_info)
+{
+	NaviFrameItem *topItem = m_pNaviFrame->getTopItem();
+	NaviFrameItem *bottomItem = m_pNaviFrame->getBottomItem();
+
+	if(topItem == bottomItem) // Last frame
+		Application::exit();
+	else
+		m_pNaviFrame->pop();
+}
+
+void Application::onHwMoreButtonPressed(Evas_Object *obj, void *event_info)
+{
+
 }
 
 void Application::onAppTerminate()

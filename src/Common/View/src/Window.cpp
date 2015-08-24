@@ -6,7 +6,6 @@ Window::Window()
 	, m_pWin(nullptr)
 	, m_pConform(nullptr)
 	, m_pBg(nullptr)
-	, m_pNf(nullptr)
 {
 	create();
 }
@@ -33,25 +32,20 @@ void Window::create()
 	evas_object_size_hint_weight_set(m_pBg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_show(m_pBg);
 
-	m_pNf = elm_naviframe_add(m_pConform);
-	eext_object_event_callback_add(m_pNf, EEXT_CALLBACK_BACK, eext_naviframe_back_cb, NULL);
-	eext_object_event_callback_add(m_pNf, EEXT_CALLBACK_MORE, eext_naviframe_more_cb, NULL);
 
 	elm_win_resize_object_add(m_pWin, m_pConform);
 	elm_object_part_content_set(m_pConform, "elm.swallow.bg", m_pBg);
-	elm_object_part_content_set(m_pConform, "elm.swallow.content", m_pNf);
 }
 
 void Window::setContent(Evas_Object *content)
 {
-    //elm_object_part_content_set(m_pConform, "elm.swallow.content", content);
-	elm_naviframe_item_push(m_pNf, "Title", NULL, NULL, content, NULL);
+	elm_object_part_content_set(m_pConform, "elm.swallow.content", content);
 }
 
-/*Evas_Object *Window::getContent() const
+Evas_Object *Window::getContent() const
 {
 	 return elm_object_part_content_get(m_pConform, "elm.swallow.content");
-}*/
+}
 
 Evas_Object *Window::getWindowEo() const
 {
@@ -66,9 +60,4 @@ Evas_Object *Window::getConformEo() const
 Evas_Object *Window::getBgEo() const
 {
 	return m_pBg;
-}
-
-Evas_Object *Window::getNfEo() const
-{
-	return m_pNf;
 }

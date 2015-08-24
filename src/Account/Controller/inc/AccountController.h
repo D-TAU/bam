@@ -3,14 +3,17 @@
 
 #include "AccountView.h"
 #include "Account.h"
+#include "NaviFrameItem.h"
+#include "NaviFrame.h"
 
 class Application;
 
 class AccountController
-	: private AccountView
+	: public NaviFrameItem
+	, private AccountViewListener
 {
 public:
-	AccountController(Application &app, sqlite::database * db, Evas_Object *parent);
+	AccountController(Application &app, sqlite::database *db, NaviFrame &naviFrame);
 	Evas_Object *getEo() const;
 
 private:
@@ -19,18 +22,20 @@ private:
 	double getInputMoney() const;
 
 private:
+	// NaviFrameItem:
+	virtual void onFrameCreated(NaviFrameItem &item);
 
-	// AccountView
+	// AccountViewListener:
 	virtual void onButtonClicked(AccountView &view, AccountView::ButtonId buttonId);
 
 	// Hardware buttons:
-	void onHwBackButtonPressed(Evas_Object *obj, void *eventInfo);
 	void onHwMoreButtonPressed(Evas_Object *obj, void *eventInfo);
-
 
 private:
 	Application &m_App;
+	NaviFrame &m_NaviFrame;
 	Account m_Account;
+	AccountView *m_pAccountView;
 };
 
 #endif /* ACCOUNTCONTROLLER_H_ */
