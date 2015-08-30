@@ -13,7 +13,7 @@ View::~View()
 void View::setEo(Evas_Object *obj)
 {
 	m_pEo = obj;
-	evas_object_event_callback_add(m_pEo, EVAS_CALLBACK_FREE, EVAS_OBJECT_EVET_CB(View, onFree), this);
+	evas_object_event_callback_add(m_pEo, EVAS_CALLBACK_FREE, EVAS_OBJECT_EVENT_CB(View, onFree), this);
 }
 
 void View::onDestroy(View &view)

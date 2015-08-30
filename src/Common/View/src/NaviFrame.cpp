@@ -1,4 +1,4 @@
-#include "Naviframe.h"
+#include "NaviFrame.h"
 
 NaviFrame::NaviFrame(Evas_Object * parent)
 {

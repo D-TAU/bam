@@ -78,8 +78,8 @@ bool Application::onAppCreate()
 	// Create window:
 	m_pWindow = new Window;
 	m_pWindow->show();
-	eext_object_event_callback_add(*m_pWindow, EEXT_CALLBACK_BACK, EEXT_EVET_CB(Application, onHwBackButtonPressed), this);
-	eext_object_event_callback_add(*m_pWindow, EEXT_CALLBACK_MORE, EEXT_EVET_CB(Application, onHwMoreButtonPressed), this);
+	eext_object_event_callback_add(*m_pWindow, EEXT_CALLBACK_BACK, EEXT_EVENT_CB(Application, onHwBackButtonPressed), this);
+	eext_object_event_callback_add(*m_pWindow, EEXT_CALLBACK_MORE, EEXT_EVENT_CB(Application, onHwMoreButtonPressed), this);
 
 	// Create Naviframe:
 	m_pNaviFrame = new NaviFrame(*m_pWindow);

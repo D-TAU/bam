@@ -1,6 +1,7 @@
 
 #include "Bam.h"
 #include "AccountController.h"
+#include "TransactionController.h"
 #include "CallbackAssist.h"
 #include "Application.h"
 
@@ -19,7 +20,7 @@ AccountController::AccountController(Application &app, sqlite::database * db,  N
 	m_pAccountView->setListener(this);
 	m_pAccountView->show();
 
-	eext_object_event_callback_add(*m_pAccountView, EEXT_CALLBACK_MORE, EEXT_EVET_CB(AccountController, onHwMoreButtonPressed), this);
+	eext_object_event_callback_add(*m_pAccountView, EEXT_CALLBACK_MORE, EEXT_EVENT_CB(AccountController, onHwMoreButtonPressed), this);
 	updateView();
 }
 
@@ -84,9 +85,8 @@ void AccountController::onButtonClicked(AccountView &view, AccountView::ButtonId
 
 		case AccountView::TransactButtonId:
 		{
-			// TODO:
-			// TransactionController * frame = new TransactionController(m_App, m_NaviFrame);
-			// m_NaviFrame->push(*frame);
+			TransactionController * frame = new TransactionController(m_App, m_NaviFrame);
+			m_NaviFrame.push(frame);
 			break;
 		}
 
