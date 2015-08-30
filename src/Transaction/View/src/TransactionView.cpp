@@ -22,7 +22,7 @@ namespace
 
 TransactionView::TransactionView(Evas_Object *parent)
 	: m_pMoneyEntry(nullptr)
-	, m_pCalendar(nullptr)
+	, m_pDateEntry(nullptr)
 {
 	create(parent);
 }
@@ -78,6 +78,23 @@ Evas_Object *TransactionView::createEntry(Evas_Object *parent)
 Evas_Object *TransactionView::createCalendar(Evas_Object *parent)
 {
 	Evas_Object *box = elm_box_add(parent);
+	evas_object_show(box);
+	elm_box_homogeneous_set(box, false);
+	elm_box_horizontal_set(box, true);
+	evas_object_size_hint_align_set(box, EVAS_HINT_FILL, 0.2);
+	evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
+	//datetime showing only DATE
+	m_pDateEntry = elm_datetime_add(box);
+	evas_object_size_hint_weight_set(m_pDateEntry, EVAS_HINT_EXPAND,
+			EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(m_pDateEntry, EVAS_HINT_FILL, 0.5);
+	elm_datetime_field_visible_set(m_pDateEntry, ELM_DATETIME_HOUR, EINA_FALSE);
+	elm_datetime_field_visible_set(m_pDateEntry, ELM_DATETIME_MINUTE, EINA_FALSE);
+	elm_datetime_field_visible_set(m_pDateEntry, ELM_DATETIME_AMPM, EINA_FALSE);
+	elm_box_pack_end(box, m_pDateEntry);
+
+	evas_object_show (m_pDateEntry);
 
 	return box;
 }

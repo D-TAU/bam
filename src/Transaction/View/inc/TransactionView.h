@@ -25,7 +25,7 @@ private:
 
 private:
 	Evas_Object *m_pMoneyEntry;
-	Evas_Object *m_pCalendar;
+	Evas_Object *m_pDateEntry;
 };
 
 #endif /* TRANSACTIONVIEW_H_ */
