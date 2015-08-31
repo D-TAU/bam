@@ -19,7 +19,7 @@ public:
 	NaviBar & getNaviBar();
 
 private:
-	virtual void onFrameCreated(NaviFrameItem &item) {};
+	virtual void onFrameCreated(NaviFrameItem &item) = 0;
 
 private:
 	NaviBar * m_pNaviBar;

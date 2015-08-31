@@ -26,3 +26,8 @@ TransactionController::~TransactionController()
 	// TODO Auto-generated destructor stub
 }
 
+void TransactionController::onFrameCreated(NaviFrameItem &item)
+{
+	getNaviBar().setTitle("Transaction");
+	setContent(*m_pTransactionView);
+}

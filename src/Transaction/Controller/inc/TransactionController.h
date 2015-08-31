@@ -22,6 +22,10 @@ public:
 	virtual ~TransactionController();
 
 private:
+	// NaviFrameItem inherited method
+	virtual void onFrameCreated(NaviFrameItem &item);
+
+private:
 	Application &m_App;
 	NaviFrame &m_NaviFrame;
 	TransactionView *m_pTransactionView;
