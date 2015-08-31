@@ -15,8 +15,7 @@ namespace
 }
 
 AccountView::AccountView(Evas_Object *parent)
-	: m_pMoneyEntry(nullptr)
-	, m_pCurrentBalanceLabel(nullptr)
+	: m_pCurrentBalanceLabel(nullptr)
 	, m_pInterestsRateLabel(nullptr)
 	, m_pListener(nullptr)
 {
@@ -117,33 +116,6 @@ void AccountView::setInterestsRate(const std::string &str)
 	std::ostringstream ss;
 	ss << "<color=#72ea79><b>" << str << "</b></color>";
 	elm_object_text_set(m_pInterestsRateLabel, applyFontSize(ss.str()).c_str());
-}
-
-std::string AccountView::getInputMoney() const
-{
-	std::string res;
-	const char *text = elm_object_text_get(m_pMoneyEntry);
-	char *utf8Text = elm_entry_markup_to_utf8(text);
-
-	if(utf8Text)
-	{
-		res = utf8Text;
-		free(utf8Text);
-	}
-
-	return res;
-}
-
-void AccountView::onWithdrawButtonClicked(Evas_Object *btn, void *eventInfo)
-{
-	if(m_pListener)
-		m_pListener->onButtonClicked(*this, WithdrawButtonId);
-}
-
-void AccountView::onDepositButtonClicked(Evas_Object *btn, void *eventInfo)
-{
-	if(m_pListener)
-		m_pListener->onButtonClicked(*this, DepositButtonId);
 }
 
 void AccountView::onTransactButtonClicked(Evas_Object *btn, void *eventInfo)

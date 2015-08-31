@@ -6,6 +6,7 @@
  */
 
 #include "TransactionView.h"
+#include "CallbackAssist.h"
 
 #include <sstream>
 #include <cstdlib>
@@ -21,8 +22,9 @@ namespace
 }
 
 TransactionView::TransactionView(Evas_Object *parent)
-	: m_pMoneyEntry(nullptr)
+	: m_pAmountEntry(nullptr)
 	, m_pDateEntry(nullptr)
+	, m_pListener(nullptr)
 {
 	create(parent);
 }
@@ -30,6 +32,33 @@ TransactionView::TransactionView(Evas_Object *parent)
 TransactionView::~TransactionView()
 {
 	// TODO Auto-generated destructor stub
+}
+
+void TransactionView::setListener(TransactionViewListener * l)
+{
+	m_pListener = l;
+}
+
+std::string TransactionView::getAmountInput() const
+{
+	std::string res;
+	const char *text = elm_object_text_get(m_pAmountEntry);
+	char *utf8Text = elm_entry_markup_to_utf8(text);
+
+	if(utf8Text)
+	{
+		res = utf8Text;
+		free(utf8Text);
+	}
+
+	return res;
+}
+
+std::string TransactionView::getDateInput() const
+{
+	std::string res;
+
+	return res;
 }
 
 void TransactionView::create(Evas_Object *parent)
@@ -63,14 +92,14 @@ Evas_Object *TransactionView::createEntry(Evas_Object *parent)
 	evas_object_color_set(bg, 140, 150, 170, 200);
 	evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
-	m_pMoneyEntry = elm_entry_add(layout);
-	elm_entry_single_line_set(m_pMoneyEntry, true);
-	evas_object_show(m_pMoneyEntry);
-	elm_entry_text_style_user_push(m_pMoneyEntry, "DEFAULT='font_size=36'");
-	elm_object_part_text_set(m_pMoneyEntry, "guide", applyFontSize("Input...").c_str());
+	m_pAmountEntry = elm_entry_add(layout);
+	elm_entry_single_line_set(m_pAmountEntry, true);
+	evas_object_show(m_pAmountEntry);
+	elm_entry_text_style_user_push(m_pAmountEntry, "DEFAULT='font_size=36'");
+	elm_object_part_text_set(m_pAmountEntry, "guide", applyFontSize("Input...").c_str());
 
 	elm_object_part_content_set(layout, "elm.swallow.bg", bg);
-	elm_layout_content_set(layout, "elm.swallow.content", m_pMoneyEntry);
+	elm_layout_content_set(layout, "elm.swallow.content", m_pAmountEntry);
 
 	return layout;
 }
@@ -113,17 +142,29 @@ Evas_Object *TransactionView::createButtons(Evas_Object *parent)
 	evas_object_size_hint_weight_set(withdraw, EVAS_HINT_EXPAND, 0.5);
 	evas_object_show(withdraw);
 	elm_object_text_set(withdraw, applyFontSize("Withdraw").c_str());
-    //evas_object_smart_callback_add(withdraw, "clicked", EVAS_SMART_CB(AccountView, onWithdrawButtonClicked), this);
+    evas_object_smart_callback_add(withdraw, "clicked", EVAS_SMART_CB(TransactionView, onWithdrawButtonClicked), this);
 
 	Evas_Object *depos = elm_button_add(box);
 	evas_object_size_hint_align_set(depos, 0.1, 0.5);
 	evas_object_size_hint_weight_set(depos, EVAS_HINT_EXPAND, 0.5);
 	evas_object_show(depos);
 	elm_object_text_set(depos, applyFontSize("Deposit").c_str());
-    //evas_object_smart_callback_add(depos, "clicked", EVAS_SMART_CB(AccountView, onDepositButtonClicked), this);
+    evas_object_smart_callback_add(depos, "clicked", EVAS_SMART_CB(TransactionView, onDepositButtonClicked), this);
 
 	elm_box_pack_end(box, withdraw);
 	elm_box_pack_end(box, depos);
 
 	return box;
+}
+
+void TransactionView::onWithdrawButtonClicked(Evas_Object *btn, void *eventInfo)
+{
+	if(m_pListener)
+		m_pListener->onButtonClicked(*this, WithdrawButtonId);
+}
+
+void TransactionView::onDepositButtonClicked(Evas_Object *btn, void *eventInfo)
+{
+	if(m_pListener)
+		m_pListener->onButtonClicked(*this, DepositButtonId);
 }

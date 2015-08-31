@@ -17,11 +17,12 @@ public:
 	Evas_Object *getEo() const;
 
 private:
-	~AccountController();
 	void updateView();
-	double getInputMoney() const;
 
 private:
+	// Destructor
+	~AccountController();
+
 	// NaviFrameItem:
 	virtual void onFrameCreated(NaviFrameItem &item);
 

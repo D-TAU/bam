@@ -20,7 +20,8 @@ AccountController::AccountController(Application &app, sqlite::database * db,  N
 	m_pAccountView->setListener(this);
 	m_pAccountView->show();
 
-	eext_object_event_callback_add(*m_pAccountView, EEXT_CALLBACK_MORE, EEXT_EVENT_CB(AccountController, onHwMoreButtonPressed), this);
+	eext_object_event_callback_add(*m_pAccountView, EEXT_CALLBACK_MORE,
+			EEXT_EVENT_CB(AccountController, onHwMoreButtonPressed), this);
 	updateView();
 }
 
@@ -52,36 +53,12 @@ void AccountController::updateView()
 	m_pAccountView->setInterestsRate(ss.str());
 }
 
-double AccountController::getInputMoney() const
-{
-	double money = 0.0;
-	std::string str = m_pAccountView->getInputMoney();
-	if(!str.empty())
-		money = std::stod(str);
-	return money;
-}
-
 void AccountController::onButtonClicked(AccountView &view, AccountView::ButtonId buttonId)
 {
 	BAM_LOG("OnButtonClicked: id = %i", buttonId);
 
 	switch(buttonId)
 	{
-		case AccountView::DepositButtonId:
-		{
-			//FIXME boilerplate with date
-			m_Account.deposit(Date::today(), getInputMoney());
-			updateView();
-			break;
-		}
-
-		case AccountView::WithdrawButtonId:
-		{
-			//FIXME boilerplate with date
-			m_Account.withdraw(Date::today(), getInputMoney());
-			updateView();
-			break;
-		}
 
 		case AccountView::TransactButtonId:
 		{
