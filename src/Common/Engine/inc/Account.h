@@ -2,8 +2,11 @@
 #define ACCOUNT_H
 
 #include <string>
+#include <vector>
 #include <sqlite_modern_cpp.h>
 #include <Date.h>
+
+class IAccountListener;
 
 class Account
 {
@@ -12,6 +15,9 @@ public:
             double interestsAnnualRate, const std::string& interestPayoffDay,
             const Date& openDate, double initialBalance = 0);
     virtual ~Account();
+
+    void addListener(IAccountListener &l);
+    void removeListener(IAccountListener &l);
 
     bool withdraw(const Date& date, double amount);
     bool deposit(const Date&, double amount);
@@ -25,19 +31,11 @@ public:
     const std::string& getName() const;
     const std::string& getInterestsPayoffDay() const;
     double getInterestsRate() const;
+
 private:
-    sqlite::database *m_db;
-    std::string m_name;
-    double m_interestsRate;
-    std::string m_interestsPayoffDay;
-    Date m_openDate;
+    typedef std::vector<IAccountListener*> AccountListenerList;
 
-    Date getLastInterestsPayoffDateBefore(const Date& date) const;
-
-    std::string m_BalancesTblName;
-    std::string m_InterestsTblName;
-    std::string m_TransactionsTblName;
-
+private:
     /*checks whether account already exists in the database*/
     bool exists() const;
 
@@ -55,6 +53,30 @@ private:
     void updateInterestsTable();
     void updateInterestsTableAfter(const Date& date);
     void upsertInterests(const Date& date, double amount);
+
+    Date getLastInterestsPayoffDateBefore(const Date& date) const;
+
+    template<class...Args>
+    void notifyListeners(void (IAccountListener::*method)(Args...args), Args&&...args);
+
+private:
+    sqlite::database *m_db;
+    std::string m_name;
+    double m_interestsRate;
+    std::string m_interestsPayoffDay;
+    Date m_openDate;
+    std::string m_BalancesTblName;
+    std::string m_InterestsTblName;
+    std::string m_TransactionsTblName;
+    AccountListenerList m_AccountListenerList;
 };
+
+class IAccountListener
+{
+public:
+	virtual ~IAccountListener() {}
+	virtual void onTransaction() {}; // TODO: Transaction args
+};
+
 
 #endif // ACCOUNT_H

@@ -1,5 +1,7 @@
 #include "Account.h"
+
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 using namespace sqlite;
@@ -31,6 +33,25 @@ Account::Account(database *db, const std::string& name,
 
 Account::~Account()
 {
+}
+
+template<class...Args>
+void Account::notifyListeners(void (IAccountListener::*method)(Args...args), Args&&...args)
+{
+	for(auto it : m_AccountListenerList)
+		((it)->*method)(args...);
+}
+
+void Account::addListener(IAccountListener &l)
+{
+	m_AccountListenerList.push_back(&l);
+}
+
+void Account::removeListener(IAccountListener &l)
+{
+	auto it = std::find(m_AccountListenerList.begin(), m_AccountListenerList.end(), &l);
+	if(it != m_AccountListenerList.end())
+		m_AccountListenerList.erase(it);
 }
 
 bool Account::deposit(const Date& date, double amount)
@@ -341,6 +362,8 @@ bool Account::deleteTransaction(int id)
                 << id;
     //update interest table after this transaction
     updateInterestsTableAfter(date);
+
+    // notifyListeners(&IAccountListener::onTransaction);
 
     return true;
 }
