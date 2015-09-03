@@ -17,7 +17,7 @@ public:
 	virtual ~NaviFrameItem();
 
 	NaviBar & getNaviBar();
-
+	virtual void updateView() {}
 private:
 	virtual void onFrameCreated(NaviFrameItem &item) = 0;
 

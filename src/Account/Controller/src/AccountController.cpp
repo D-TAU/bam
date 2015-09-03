@@ -5,6 +5,7 @@
 #include "CallbackAssist.h"
 #include "Application.h"
 
+
 #include <efl_extension.h>
 #include <sstream>
 #include <string>
@@ -62,7 +63,7 @@ void AccountController::onButtonClicked(AccountView &view, AccountView::ButtonId
 
 		case AccountView::TransactButtonId:
 		{
-			TransactionController * frame = new TransactionController(m_App, m_NaviFrame);
+			TransactionController * frame = new TransactionController(m_App, m_NaviFrame, m_Account);
 			m_NaviFrame.push(frame);
 			break;
 		}

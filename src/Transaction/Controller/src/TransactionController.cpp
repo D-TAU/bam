@@ -7,11 +7,13 @@
 
 #include "Bam.h"
 #include "TransactionController.h"
+#include "Account.h"
 
-TransactionController::TransactionController(Application &app, NaviFrame &naviframe)
+TransactionController::TransactionController(Application &app, NaviFrame &naviframe, Account &account)
 	: NaviFrameItem()
 	, m_App(app)
 	, m_NaviFrame(naviframe)
+	, m_Account(account)
 {
 	m_pTransactionView = new TransactionView(m_NaviFrame);
 	m_pTransactionView->setListener(this);
@@ -51,18 +53,18 @@ void TransactionController::onButtonClicked(TransactionView &view, TransactionVi
 		case TransactionView::DepositButtonId:
 		{
 			//FIXME boilerplate with date
-			//m_Account.deposit(Date::today(), getInputMoney());
-			//updateView();
+			m_Account.deposit(Date::today(), getAmountInput());
 			m_NaviFrame.pop();
+			m_NaviFrame.getTopItem()->updateView();
 			break;
 		}
 
 		case TransactionView::WithdrawButtonId:
 		{
 			//FIXME boilerplate with date
-			//m_Account.withdraw(Date::today(), getInputMoney());
-			//updateView();
+			m_Account.withdraw(Date::today(), getAmountInput());
 			m_NaviFrame.pop();
+			m_NaviFrame.getTopItem()->updateView();
 			break;
 		}
 

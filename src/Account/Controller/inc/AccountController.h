@@ -15,8 +15,6 @@ class AccountController
 public:
 	AccountController(Application &app, sqlite::database *db, NaviFrame &naviFrame);
 	Evas_Object *getEo() const;
-
-private:
 	void updateView();
 
 private:
