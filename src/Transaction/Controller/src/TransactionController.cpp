@@ -44,6 +44,13 @@ double TransactionController::getAmountInput() const
 	return money;
 }
 
+Date TransactionController::getDateInput() const
+{
+	std::string str = m_pTransactionView->getDateInput();
+
+	return str;
+}
+
 void TransactionController::onButtonClicked(TransactionView &view, TransactionView::ButtonId buttonId)
 {
 	BAM_LOG("OnButtonClicked: id = %i", buttonId);
@@ -53,7 +60,7 @@ void TransactionController::onButtonClicked(TransactionView &view, TransactionVi
 		case TransactionView::DepositButtonId:
 		{
 			//FIXME boilerplate with date
-			m_Account.deposit(Date::today(), getAmountInput());
+			m_Account.deposit(getDateInput(), getAmountInput());
 			m_NaviFrame.pop();
 			m_NaviFrame.getTopItem()->updateView();
 			break;
@@ -62,7 +69,7 @@ void TransactionController::onButtonClicked(TransactionView &view, TransactionVi
 		case TransactionView::WithdrawButtonId:
 		{
 			//FIXME boilerplate with date
-			m_Account.withdraw(Date::today(), getAmountInput());
+			m_Account.withdraw(getDateInput(), getAmountInput());
 			m_NaviFrame.pop();
 			m_NaviFrame.getTopItem()->updateView();
 			break;
