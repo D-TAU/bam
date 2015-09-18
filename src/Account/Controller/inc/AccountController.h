@@ -2,7 +2,7 @@
 #define ACCOUNTCONTROLLER_H_
 
 #include "AccountView.h"
-#include "Account.h"
+#include "AccountHandle.h"
 #include "NaviFrameItem.h"
 #include "NaviFrame.h"
 
@@ -33,7 +33,7 @@ private:
 private:
 	Application &m_App;
 	NaviFrame &m_NaviFrame;
-	Account m_Account;
+	AccountHandle  *m_Account;
 	AccountView *m_pAccountView;
 };
 

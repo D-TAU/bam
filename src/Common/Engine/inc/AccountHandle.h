@@ -1,27 +1,54 @@
-#ifndef ACCOUNT_H
-#define ACCOUNT_H
+#ifndef ACCOUNTHANDLE_H
+#define ACCOUNTHANDLE_H
 
 #include <string>
 #include <vector>
 #include <sqlite_modern_cpp.h>
+#include <AccountHandle.h>
 #include <Date.h>
 
-class IAccountListener;
+namespace sqlite
+{
+    class database;
+}
 
-class Account
+class AccountHandle
 {
 public:
-    Account(sqlite::database *db, const std::string& name,
-            double interestsAnnualRate, const std::string& interestPayoffDay,
-            const Date& openDate, double initialBalance = 0);
-    virtual ~Account();
+    struct TransactionStruct
+    {
+        enum Type {ttUSER, ttINTERESTS};
+        static std::string getTextForEnum( Type enumVal )
+        {
+            static const char * EnumStrings[] = { "0", "1"};
+            return EnumStrings[enumVal];
+        }
 
-    void addListener(IAccountListener &l);
-    void removeListener(IAccountListener &l);
+        double amount;
+        Date date;
+        int id;
+        Type type;
+    };
+
+    AccountHandle(sqlite::database& db);
+    virtual ~AccountHandle();
+
+    bool create(const std::string& name,
+            double interestsAnnualRate,
+            const std::string& interestPayoffDay,
+            const Date& openDate,
+            double initialBalance = 0);
+    bool open(const std::string& name,
+            double interestsAnnualRate,
+            const std::string& interestPayoffDay,
+            const Date& openDate);
+
 
     bool withdraw(const Date& date, double amount);
     bool deposit(const Date&, double amount);
     bool deleteTransaction(int id);
+    /*returns all transactions sorted by date*/
+    std::vector<TransactionStruct> getTransactions() const;
 
     double getPaidInterests() const;
     double getAccruedInterests() const;
@@ -31,12 +58,20 @@ public:
     const std::string& getName() const;
     const std::string& getInterestsPayoffDay() const;
     double getInterestsRate() const;
-
 private:
-    typedef std::vector<IAccountListener*> AccountListenerList;
+    sqlite::database& m_db;
+    std::string m_name;
+    double m_interestsRate;
+    std::string m_interestsPayoffDay;
+    Date m_openDate;
 
-private:
-    /*checks whether account already exists in the database*/
+    Date getLastInterestsPayoffDateBefore(const Date& date) const;
+
+    std::string m_BalancesTblName;
+    std::string m_InterestsTblName;
+    std::string m_TransactionsTblName;
+
+    /*checks whether AccountHandle already exists in the database*/
     bool exists() const;
 
     void createTables();
@@ -53,30 +88,6 @@ private:
     void updateInterestsTable();
     void updateInterestsTableAfter(const Date& date);
     void upsertInterests(const Date& date, double amount);
-
-    Date getLastInterestsPayoffDateBefore(const Date& date) const;
-
-    template<class...Args>
-    void notifyListeners(void (IAccountListener::*method)(Args...args), Args&&...args);
-
-private:
-    sqlite::database *m_db;
-    std::string m_name;
-    double m_interestsRate;
-    std::string m_interestsPayoffDay;
-    Date m_openDate;
-    std::string m_BalancesTblName;
-    std::string m_InterestsTblName;
-    std::string m_TransactionsTblName;
-    AccountListenerList m_AccountListenerList;
 };
 
-class IAccountListener
-{
-public:
-	virtual ~IAccountListener() {}
-	virtual void onTransaction() {}; // TODO: Transaction args
-};
-
-
-#endif // ACCOUNT_H
+#endif // ACCOUNTHANDLE_H

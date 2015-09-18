@@ -12,7 +12,7 @@ namespace sqlite
 {
     class database;
 };
-class Account;
+class AccountHandle;
 
 class AccountManager
 {
@@ -20,13 +20,13 @@ public:
 	AccountManager();
 	virtual ~AccountManager();
 
-	Account * getCurrentAccount() const;
+	AccountHandle * getCurrentAccount() const;
 	void setCurrentAccount(int id);
 private:
 	/*accounts database*/
 	sqlite::database *m_db;
 	/*pointer to current account*/
-	Account * m_pAccount;
+	AccountHandle * m_pAccount;
 };
 
 #endif /* ACCOUNTMANAGER_H_ */

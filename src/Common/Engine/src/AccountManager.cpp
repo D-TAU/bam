@@ -6,7 +6,7 @@
  */
 
 #include "AccountManager.h"
-#include "Account.h"
+#include "AccountHandle.h"
 
 AccountManager::AccountManager()
 	: m_pAccount(nullptr)
@@ -20,7 +20,7 @@ AccountManager::~AccountManager()
 	delete m_db;
 }
 
-Account * AccountManager::getCurrentAccount() const
+AccountHandle * AccountManager::getCurrentAccount() const
 {
 	return m_pAccount;
 }
@@ -30,5 +30,6 @@ void AccountManager::setCurrentAccount(int id)
 	// FIXME: later account should be selected from the accounts table
 	if(m_pAccount)
 		delete m_pAccount;
-	m_pAccount = new Account(m_db, "MyName", 9, "25", Date("2015-08-03"));
+	m_pAccount = new AccountHandle(*m_db);
+	m_pAccount->create("MyName", 9, "25", Date("2015-08-03"));
 }

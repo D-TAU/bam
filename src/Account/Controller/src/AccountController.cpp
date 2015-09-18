@@ -14,9 +14,10 @@ AccountController::AccountController(Application &app, sqlite::database * db,  N
 	: NaviFrameItem()
 	, m_App(app)
 	, m_NaviFrame(naviFrame)
-	, m_Account(db, "MyName", 9, "25", Date("2015-08-03")) //FIXME account initialization
-
 {
+	m_Account = new AccountHandle(*db);
+	m_Account->create("MyName", 9, "25", Date("2015-08-03")); //FIXME account initialization
+
 	m_pAccountView = new AccountView(m_NaviFrame);
 	m_pAccountView->setListener(this);
 	m_pAccountView->show();
@@ -46,11 +47,11 @@ void AccountController::updateView()
 {
 	std::ostringstream ss;
 
-	ss << m_Account.getBalance();
+	ss << m_Account->getBalance();
 	m_pAccountView->setCurrentBalance(ss.str());
 
 	ss.str("");
-	ss << m_Account.getInterestsRate();
+	ss << m_Account->getInterestsRate();
 	m_pAccountView->setInterestsRate(ss.str());
 }
 
@@ -63,7 +64,7 @@ void AccountController::onButtonClicked(AccountView &view, AccountView::ButtonId
 
 		case AccountView::TransactButtonId:
 		{
-			TransactionController * frame = new TransactionController(m_App, m_NaviFrame, m_Account);
+			TransactionController * frame = new TransactionController(m_App, m_NaviFrame, *m_Account);
 			m_NaviFrame.push(frame);
 			break;
 		}
