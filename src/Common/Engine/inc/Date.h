@@ -27,6 +27,8 @@ class Date
 public:
     Date();
     Date(const std::string& str);
+    Date(const time_t & rawtime);
+    Date(struct tm * timeinfo);
     virtual ~Date();
 
     static Date today();
@@ -38,6 +40,7 @@ public:
     int operator-(const Date& ) const;
     bool operator>=(const Date& ) const;
     bool operator<=(const Date& ) const;
+    bool operator==(const Date& ) const;
     Date& operator=(const std::string& );
 
     Date operator+(const ndays& ) const;

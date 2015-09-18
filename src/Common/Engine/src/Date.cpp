@@ -18,13 +18,14 @@ Date Date::today()
 {
     time_t rawtime;
     struct tm * timeinfo;
-    char buffer[80];
 
     time (&rawtime);
     timeinfo = localtime (&rawtime);
+    timeinfo->tm_hour   = 1;
+    timeinfo->tm_min    = 0;
+    timeinfo->tm_sec    = 0;
 
-    strftime (buffer,80,"%F",timeinfo);
-    return Date(buffer);
+    return Date(timeinfo);
 }
 
 Date::Date(): m_dateData(0)
@@ -54,6 +55,28 @@ Date::Date(const std::string& str)
 
 }
 
+Date::Date(const time_t & rawtime)
+{
+    struct tm * timeinfo;
+
+    timeinfo = localtime (&rawtime);
+    timeinfo->tm_hour   = 1;
+    timeinfo->tm_min    = 0;
+    timeinfo->tm_sec    = 0;
+
+    m_dateData = rawtime;
+}
+
+Date::Date(struct tm * timeinfo)
+{
+    timeinfo->tm_hour   = 1;
+    timeinfo->tm_min    = 0;
+    timeinfo->tm_sec    = 0;
+
+    m_dateData = mktime (timeinfo);
+}
+
+
 Date::~Date()
 {
     //dtor
@@ -66,11 +89,12 @@ std::string Date::toSqlFmt() const
 
 std::string Date::toStrFmt() const
 {
-    char buffer[80];
+    const unsigned int nbSymbolsInDateString = 12;
+    char buffer[nbSymbolsInDateString];
     struct tm * timeinfo;
 
     timeinfo = localtime (&m_dateData);
-    strftime (buffer, 80, "%F", timeinfo);
+    strftime (buffer, nbSymbolsInDateString, "%F", timeinfo);
 
     return std::string(buffer);
 }
@@ -88,6 +112,11 @@ bool Date::operator>=(const Date& rhs) const
 bool Date::operator<=(const Date& rhs) const
 {
     return (m_dateData <= rhs.m_dateData);
+}
+
+bool Date::operator==(const Date& rhs) const
+{
+    return (m_dateData == rhs.m_dateData);
 }
 
 Date& Date::operator=(const std::string& rhs)
