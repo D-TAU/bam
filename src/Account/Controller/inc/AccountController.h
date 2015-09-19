@@ -13,7 +13,7 @@ class AccountController
 	, private AccountViewListener
 {
 public:
-	AccountController(Application &app, sqlite::database *db, NaviFrame &naviFrame);
+	AccountController(Application &app, NaviFrame &naviFrame);
 	Evas_Object *getEo() const;
 	void updateView();
 

@@ -2,12 +2,13 @@
 #include "Bam.h"
 #include "Application.h"
 #include "AccountController.h"
+#include "AccountManager.h"
 #include "CallbackAssist.h"
 
 Application::Application()
 	: m_pWindow(nullptr)
 	, m_pNaviFrame(nullptr)
-	, m_db(nullptr)
+	, m_pAccountManager(nullptr)
 {
 	BAM_LOG("App create");
 }
@@ -72,9 +73,6 @@ bool Application::onAppCreate()
 {
 	BAM_LOG("App create");
 
-	//FIXME in-memory database should be replaced by database file
-	m_db = new sqlite::database(":memory:");
-
 	// Create window:
 	m_pWindow = new Window;
 	m_pWindow->show();
@@ -85,9 +83,10 @@ bool Application::onAppCreate()
 	m_pNaviFrame = new NaviFrame(*m_pWindow);
 	m_pNaviFrame->show();
 
-
+	// Create AccountManager
+	m_pAccountManager = new AccountManager();
 	// Create AccountController
-	AccountController *account = new AccountController(*this, m_db, *m_pNaviFrame);
+	AccountController *account = new AccountController(*this, *m_pNaviFrame);
 
 	m_pNaviFrame->push(account);
 	m_pWindow->setContent(*m_pNaviFrame);
@@ -117,7 +116,6 @@ void Application::onAppTerminate()
 
 	m_pWindow->destroy();
 
-	delete m_db;
 }
 
 void Application::onAppPause()
@@ -133,4 +131,14 @@ void Application::onAppResume()
 void Application::onAppControl(app_control_h app_control)
 {
 	BAM_LOG("App control");
+}
+
+AccountManager &Application::getEngine()
+{
+	return (*m_pAccountManager);
+}
+
+const AccountManager &Application::getEngine() const
+{
+	return (*m_pAccountManager);
 }

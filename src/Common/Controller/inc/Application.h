@@ -42,8 +42,8 @@ private:
 private:
 	Window *m_pWindow;
 	NaviFrame *m_pNaviFrame;
-	/*accounts database*/
-	sqlite::database *m_db;
+	/*accounts manager*/
+	AccountManager * m_pAccountManager;
 };
 
 #endif // BamApplicatin_h

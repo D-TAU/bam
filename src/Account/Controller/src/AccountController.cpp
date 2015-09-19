@@ -1,6 +1,7 @@
 
 #include "Bam.h"
 #include "AccountController.h"
+#include "AccountManager.h"
 #include "TransactionController.h"
 #include "CallbackAssist.h"
 #include "Application.h"
@@ -10,13 +11,13 @@
 #include <sstream>
 #include <string>
 
-AccountController::AccountController(Application &app, sqlite::database * db,  NaviFrame &naviFrame)
+AccountController::AccountController(Application &app,  NaviFrame &naviFrame)
 	: NaviFrameItem()
 	, m_App(app)
 	, m_NaviFrame(naviFrame)
 {
-	m_Account = new AccountHandle(*db);
-	m_Account->create("MyName", 9, "25", Date("2015-08-03")); //FIXME account initialization
+	app.getEngine().setCurrentAccount(0);//FIXME this should be done in another place
+	m_Account = app.getEngine().getCurrentAccount();
 
 	m_pAccountView = new AccountView(m_NaviFrame);
 	m_pAccountView->setListener(this);
