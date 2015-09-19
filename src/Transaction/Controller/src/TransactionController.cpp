@@ -46,9 +46,9 @@ double TransactionController::getAmountInput() const
 
 Date TransactionController::getDateInput() const
 {
-	std::string str = m_pTransactionView->getDateInput();
+	Date date(m_pTransactionView->getDateInput());
 
-	return str;
+	return date;
 }
 
 void TransactionController::onButtonClicked(TransactionView &view, TransactionView::ButtonId buttonId)

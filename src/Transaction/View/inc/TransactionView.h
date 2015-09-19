@@ -26,7 +26,7 @@ public:
 	TransactionView(Evas_Object *parent);
 
 	std::string getAmountInput() const;
-	std::string getDateInput() const;
+	time_t getDateInput() const;
 
 	void setListener(TransactionViewListener * l);
 

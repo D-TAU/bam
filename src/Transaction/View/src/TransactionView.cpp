@@ -54,18 +54,16 @@ std::string TransactionView::getAmountInput() const
 	return res;
 }
 
-std::string TransactionView::getDateInput() const
+time_t TransactionView::getDateInput() const
 {
 	time_t rawTime;
 	struct tm * timeinfo;
-	char buffer [80];
 
 	time(&rawTime);
 	timeinfo = localtime(&rawTime);
 	elm_datetime_value_get(m_pDateEntry, timeinfo);
-	strftime (buffer,80,"%F",timeinfo);
 
-	return std::string(buffer);
+	return mktime ( timeinfo );
 }
 
 void TransactionView::create(Evas_Object *parent)
