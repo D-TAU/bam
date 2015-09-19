@@ -11,6 +11,7 @@ namespace sqlite
 {
     class database;
 }
+class IAccountListener;
 
 class AccountHandle
 {
@@ -42,6 +43,9 @@ public:
             double interestsAnnualRate,
             const std::string& interestPayoffDay,
             const Date& openDate);
+            
+    void addListener(IAccountListener &l);
+    void removeListener(IAccountListener &l);
 
 
     bool withdraw(const Date& date, double amount);
@@ -59,6 +63,8 @@ public:
     const std::string& getInterestsPayoffDay() const;
     double getInterestsRate() const;
 private:
+    typedef std::vector<IAccountListener*> AccountListenerList;
+    
     sqlite::database& m_db;
     std::string m_name;
     double m_interestsRate;
@@ -70,6 +76,7 @@ private:
     std::string m_BalancesTblName;
     std::string m_InterestsTblName;
     std::string m_TransactionsTblName;
+    AccountListenerList m_AccountListenerList;
 
     /*checks whether AccountHandle already exists in the database*/
     bool exists() const;
@@ -88,6 +95,15 @@ private:
     void updateInterestsTable();
     void updateInterestsTableAfter(const Date& date);
     void upsertInterests(const Date& date, double amount);
+    
+    template<class...Args>
+    void notifyListeners(void (IAccountListener::*method)(Args...args), Args&&...args);
 };
 
+class IAccountListener
+{
+public:
+    virtual ~IAccountListener() {}
+    virtual void onTransaction() {}; // TODO: Transaction args
+};
 #endif // ACCOUNTHANDLE_H

@@ -1,5 +1,6 @@
 #include "AccountHandle.h"
 #include <iostream>
+#include <algorithm>
 #include <sqlite_modern_cpp.h>
 
 using namespace std;
@@ -11,6 +12,25 @@ AccountHandle::AccountHandle(database& db): m_db(db)
 
 AccountHandle::~AccountHandle()
 {
+}
+
+template<class...Args>
+void AccountHandle::notifyListeners(void (IAccountListener::*method)(Args...args), Args&&...args)
+{
+    for(auto it : m_AccountListenerList)
+        ((it)->*method)(args...);
+}
+
+void AccountHandle::addListener(IAccountListener &l)
+{
+    m_AccountListenerList.push_back(&l);
+}
+
+void AccountHandle::removeListener(IAccountListener &l)
+{
+    auto it = std::find(m_AccountListenerList.begin(), m_AccountListenerList.end(), &l);
+    if(it != m_AccountListenerList.end())
+        m_AccountListenerList.erase(it);
 }
 
 bool AccountHandle::create(const std::string& name,
