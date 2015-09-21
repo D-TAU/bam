@@ -33,16 +33,26 @@ void AccountView::setListener(AccountViewListener * l)
 
 void AccountView::create(Evas_Object *parent)
 {
-	Evas_Object *mainBox = elm_box_add(parent);
+	Evas_Object *mainBox, *tb;
+	mainBox = elm_box_add(parent);
 	setEo(mainBox);
-	elm_box_homogeneous_set(mainBox, false);
-	elm_box_horizontal_set(mainBox, false);
+	evas_object_size_hint_weight_set(mainBox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_show(mainBox);
+
+	tb = elm_toolbar_add(parent);
+	elm_toolbar_shrink_mode_set(tb, ELM_TOOLBAR_SHRINK_SCROLL);
+	evas_object_size_hint_weight_set(tb, 0.0, 0.0);
+	evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, 0.0);
+	evas_object_show(tb);
+
+	elm_toolbar_item_append(tb, nullptr, "Overview", nullptr, nullptr);
+	elm_toolbar_item_append(tb, nullptr, "Transactions", nullptr, nullptr);
 
 	Evas_Object *balance = createCurrentBalance(mainBox);
 	Evas_Object *interests = createInterestsRate(mainBox);
-
 	Evas_Object *tbutton = createTransactionButton(mainBox);
 
+	elm_box_pack_end(mainBox, tb);
 	elm_box_pack_end(mainBox, balance);
 	elm_box_pack_end(mainBox, interests);
 	elm_box_pack_end(mainBox, tbutton);
