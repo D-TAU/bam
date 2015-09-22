@@ -45,17 +45,14 @@ void AccountView::create(Evas_Object *parent)
 	evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, 0.0);
 	evas_object_show(tb);
 
-	elm_toolbar_item_append(tb, nullptr, "Overview", nullptr, nullptr);
-	elm_toolbar_item_append(tb, nullptr, "Transactions", nullptr, nullptr);
+	elm_toolbar_item_append(tb, nullptr, "Overview", EVAS_SMART_CB(AccountView, onOverviewTabSelected), this);
+	elm_toolbar_item_append(tb, nullptr, "Transactions", EVAS_SMART_CB(AccountView, onTransactTabSelected), this);
 
-	Evas_Object *balance = createCurrentBalance(mainBox);
-	Evas_Object *interests = createInterestsRate(mainBox);
-	Evas_Object *tbutton = createTransactionButton(mainBox);
+	m_pTabContent = elm_box_add(mainBox);
+	evas_object_size_hint_weight_set(m_pTabContent, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
 	elm_box_pack_end(mainBox, tb);
-	elm_box_pack_end(mainBox, balance);
-	elm_box_pack_end(mainBox, interests);
-	elm_box_pack_end(mainBox, tbutton);
+	elm_box_pack_end(mainBox, m_pTabContent);
 }
 
 Evas_Object *AccountView::createCurrentBalance(Evas_Object *parent)
@@ -132,4 +129,39 @@ void AccountView::onTransactButtonClicked(Evas_Object *btn, void *eventInfo)
 {
 	if(m_pListener)
 		m_pListener->onButtonClicked(*this, TransactButtonId);
+}
+
+void AccountView::onOverviewTabSelected(Evas_Object *tab, void *eventInfo)
+{
+	elm_box_clear(m_pTabContent);
+
+	Evas_Object *balance = createCurrentBalance(m_pTabContent);
+	Evas_Object *interests = createInterestsRate(m_pTabContent);
+	Evas_Object *tbutton = createTransactionButton(m_pTabContent);
+
+	elm_box_pack_end(m_pTabContent, balance);
+	elm_box_pack_end(m_pTabContent, interests);
+	elm_box_pack_end(m_pTabContent, tbutton);
+
+	evas_object_show(m_pTabContent);
+}
+
+void AccountView::onTransactTabSelected(Evas_Object *tab, void *eventInfo)
+{
+	elm_box_clear(m_pTabContent);
+	//FIXME: insert here real transactions
+	Evas_Object *list = elm_list_add(m_pTabContent);
+	evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	elm_box_pack_end(m_pTabContent, list);
+	//TODO: probably scroller would be useful
+	elm_list_item_append(list, "Transaction 1", nullptr, nullptr, nullptr, nullptr);
+	elm_list_item_append(list, "Transaction 2", nullptr, nullptr, nullptr, nullptr);
+	elm_list_item_append(list, "Transaction N", nullptr, nullptr, nullptr, nullptr);
+	/* enable multiple selection and always select */
+
+	elm_list_go(list);
+	evas_object_show(list);
+
+	evas_object_show(m_pTabContent);
 }

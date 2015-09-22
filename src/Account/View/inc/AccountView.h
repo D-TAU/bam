@@ -37,9 +37,13 @@ private:
 
 	void onTransactButtonClicked(Evas_Object *btn, void *eventInfo);
 
+	void onOverviewTabSelected(Evas_Object *tab, void *eventInfo);
+	void onTransactTabSelected(Evas_Object *tab, void *eventInfo);
+
 private:
 	Evas_Object *m_pCurrentBalanceLabel;
 	Evas_Object *m_pInterestsRateLabel;
+	Evas_Object *m_pTabContent;
 	AccountViewListener *m_pListener;
 };
 
