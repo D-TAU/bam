@@ -34,16 +34,21 @@ private:
 	Evas_Object *createCurrentBalance(Evas_Object *parent);
 	Evas_Object *createInterestsRate(Evas_Object *parent);
 	Evas_Object *createTransactionButton(Evas_Object *parent);
+	Evas_Object *createOverviewTabContent(Evas_Object *parent);
+	Evas_Object *createTransactionsTabContent(Evas_Object *parent);
 
 	void onTransactButtonClicked(Evas_Object *btn, void *eventInfo);
-
 	void onOverviewTabSelected(Evas_Object *tab, void *eventInfo);
 	void onTransactTabSelected(Evas_Object *tab, void *eventInfo);
 
 private:
+	enum TabContent {tcOverview, tcTransactions};
+	TabContent m_currentTabContent;
+
 	Evas_Object *m_pCurrentBalanceLabel;
 	Evas_Object *m_pInterestsRateLabel;
-	Evas_Object *m_pTabContent;
+	Evas_Object *m_pOverviewTabContent, *m_pTransactionsTabContent;
+	Evas_Object *m_pTransactionBtn;
 	AccountViewListener *m_pListener;
 };
 

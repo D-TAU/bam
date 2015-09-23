@@ -37,6 +37,7 @@ void AccountView::create(Evas_Object *parent)
 	mainBox = elm_box_add(parent);
 	setEo(mainBox);
 	evas_object_size_hint_weight_set(mainBox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(mainBox, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	evas_object_show(mainBox);
 
 	tb = elm_toolbar_add(parent);
@@ -48,11 +49,16 @@ void AccountView::create(Evas_Object *parent)
 	elm_toolbar_item_append(tb, nullptr, "Overview", EVAS_SMART_CB(AccountView, onOverviewTabSelected), this);
 	elm_toolbar_item_append(tb, nullptr, "Transactions", EVAS_SMART_CB(AccountView, onTransactTabSelected), this);
 
-	m_pTabContent = elm_box_add(mainBox);
-	evas_object_size_hint_weight_set(m_pTabContent, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	m_pTransactionBtn = createTransactionButton(mainBox);
+	m_pOverviewTabContent = createOverviewTabContent(mainBox);
+	m_pTransactionsTabContent = createTransactionsTabContent(mainBox);
 
+	/*initially overview tab is active*/
+	m_currentTabContent = tcOverview;
+	evas_object_show(m_pOverviewTabContent);
 	elm_box_pack_end(mainBox, tb);
-	elm_box_pack_end(mainBox, m_pTabContent);
+	elm_box_pack_end(mainBox, m_pOverviewTabContent);
+	elm_box_pack_end(mainBox, m_pTransactionBtn);
 }
 
 Evas_Object *AccountView::createCurrentBalance(Evas_Object *parent)
@@ -111,6 +117,45 @@ Evas_Object *AccountView::createTransactionButton(Evas_Object *parent)
 	return transact;
 }
 
+Evas_Object *AccountView::createOverviewTabContent(Evas_Object *parent)
+{
+	Evas_Object * contentBox = elm_box_add(parent);
+	evas_object_size_hint_weight_set(contentBox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(contentBox, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+	Evas_Object *balance = createCurrentBalance(contentBox);
+	Evas_Object *interests = createInterestsRate(contentBox);
+
+	elm_box_pack_end(contentBox, balance);
+	elm_box_pack_end(contentBox, interests);
+
+	return contentBox;
+}
+
+Evas_Object *AccountView::createTransactionsTabContent(Evas_Object *parent)
+{
+	Evas_Object * contentBox = elm_box_add(parent);
+	evas_object_size_hint_weight_set(contentBox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(contentBox, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+	//FIXME: insert here real transactions
+	Evas_Object *list = elm_list_add(contentBox);
+	evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	elm_box_pack_end(contentBox, list);
+
+	//FIXME: arbitrary items in the list
+	elm_list_item_append(list, "Transaction 1", nullptr, nullptr, nullptr, nullptr);
+	elm_list_item_append(list, "Transaction 2", nullptr, nullptr, nullptr, nullptr);
+	elm_list_item_append(list, "Transaction N", nullptr, nullptr, nullptr, nullptr);
+	/* enable multiple selection and always select */
+
+	elm_list_go(list);
+	evas_object_show(list);
+
+	return contentBox;
+}
+
 void AccountView::setCurrentBalance(const std::string &str)
 {
 	std::ostringstream ss;
@@ -133,35 +178,27 @@ void AccountView::onTransactButtonClicked(Evas_Object *btn, void *eventInfo)
 
 void AccountView::onOverviewTabSelected(Evas_Object *tab, void *eventInfo)
 {
-	elm_box_clear(m_pTabContent);
+	if (m_currentTabContent != tcOverview)
+	{
+		m_currentTabContent = tcOverview;
+		elm_box_unpack(getEo(), m_pTransactionsTabContent);
+		evas_object_hide(m_pTransactionsTabContent);
 
-	Evas_Object *balance = createCurrentBalance(m_pTabContent);
-	Evas_Object *interests = createInterestsRate(m_pTabContent);
-	Evas_Object *tbutton = createTransactionButton(m_pTabContent);
-
-	elm_box_pack_end(m_pTabContent, balance);
-	elm_box_pack_end(m_pTabContent, interests);
-	elm_box_pack_end(m_pTabContent, tbutton);
-
-	evas_object_show(m_pTabContent);
+		elm_box_pack_before(getEo(), m_pOverviewTabContent, m_pTransactionBtn);
+		evas_object_show(m_pOverviewTabContent);
+	}
 }
 
 void AccountView::onTransactTabSelected(Evas_Object *tab, void *eventInfo)
 {
-	elm_box_clear(m_pTabContent);
-	//FIXME: insert here real transactions
-	Evas_Object *list = elm_list_add(m_pTabContent);
-	evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_box_pack_end(m_pTabContent, list);
-	//TODO: probably scroller would be useful
-	elm_list_item_append(list, "Transaction 1", nullptr, nullptr, nullptr, nullptr);
-	elm_list_item_append(list, "Transaction 2", nullptr, nullptr, nullptr, nullptr);
-	elm_list_item_append(list, "Transaction N", nullptr, nullptr, nullptr, nullptr);
-	/* enable multiple selection and always select */
+	if (m_currentTabContent != tcTransactions)
+	{
+		m_currentTabContent = tcTransactions;
+		elm_box_unpack(getEo(), m_pOverviewTabContent);
+		evas_object_hide(m_pOverviewTabContent);
 
-	elm_list_go(list);
-	evas_object_show(list);
-
-	evas_object_show(m_pTabContent);
+		elm_box_pack_before(getEo(), m_pTransactionsTabContent,
+				m_pTransactionBtn);
+		evas_object_show(m_pTransactionsTabContent);
+	}
 }
