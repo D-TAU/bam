@@ -73,14 +73,7 @@ void AccountController::updateView()
 	m_pAccountView->setAccruedInterests(ss.str());
 
 	TransactionsList tlist = m_Account->getTransactions();
-	std::vector<std::string> tlist_str;
-	for(size_t i = 0; i < tlist.size(); ++i)
-	{
-		ss.str("");
-		ss << "<color=#72ea78>" << tlist[i].m_date.toStrFmt() << "</color>" << " " << tlist[i].m_amount;
-		tlist_str.push_back(ss.str());
-	}
-	m_pAccountView->setTransactionsList(tlist_str);
+	m_pAccountView->setTransactionsList(tlist);
 }
 
 void AccountController::onButtonClicked(AccountView &view, AccountView::ButtonId buttonId)

@@ -1,4 +1,6 @@
 #include "AccountView.h"
+#include "TransactionItem.h"
+#include "AccountHandle.h"
 #include "CallbackAssist.h"
 
 #include <sstream>
@@ -248,12 +250,27 @@ void AccountView::setOpenDate(const std::string &str)
 	elm_object_text_set(m_pOpenDateLabel, applyFontSize(ss.str()).c_str());
 }
 
-void AccountView::setTransactionsList(const std::vector<std::string>& tlist)
+void AccountView::setTransactionsList(const TransactionsList& tlist)
 {
+	std::ostringstream ss;
+
+	ss.precision(2);
+	ss.setf(std::ios::fixed);
+
 	/*clear list from previously added items: prevent repeating*/
 	elm_list_clear(m_pTransactionsTabContent);
 	for(size_t i = 0; i < tlist.size(); ++i)
-		elm_list_item_append(m_pTransactionsTabContent, tlist[i].c_str(), nullptr, nullptr, nullptr, nullptr);
+	{
+		ss.str("");
+		if(tlist[i].m_type == TransactionItem::ttUSER)
+			ss << "<color=#72ea78>" << tlist[i].m_date.toStrFmt() << " " << tlist[i].m_amount << "</color>";
+		else if(tlist[i].m_type == TransactionItem::ttINTERESTS)
+			ss << "<color=#909596>" << tlist[i].m_date.toStrFmt() << " " << tlist[i].m_amount << "</color>";
+		else
+			ss << "<color=#50ea78>" << tlist[i].m_date.toStrFmt() << " " << tlist[i].m_amount << "</color>";
+
+		elm_list_item_append(m_pTransactionsTabContent, ss.str().c_str(), nullptr, nullptr, nullptr, nullptr);
+	}
 
 	elm_list_go(m_pTransactionsTabContent);
 	evas_object_show(m_pTransactionsTabContent);
