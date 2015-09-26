@@ -2,12 +2,14 @@
 #include <iostream>
 #include <algorithm>
 #include <sqlite_modern_cpp.h>
+#include <TransactionItem.h>
 
 using namespace std;
 using namespace sqlite;
 
 AccountHandle::AccountHandle(database& db): m_db(db)
 {
+	m_interestsRate = 0;
 }
 
 AccountHandle::~AccountHandle()
@@ -454,25 +456,25 @@ double AccountHandle::getAccruedInterests() const
     return interests;
 }
 
-std::vector<AccountHandle::TransactionStruct> AccountHandle::getTransactions() const
+TransactionsList AccountHandle::getTransactions() const
 {
-    std::vector<TransactionStruct> transactions;
-    TransactionStruct transaction;
+    TransactionsList transactions;
+    TransactionItem transaction;
 
     m_db << "SELECT Id, TransactionDate, Amount, "
-                    + TransactionStruct::getTextForEnum(TransactionStruct::ttUSER) + " "
+                    + TransactionItem::getTextForEnum(TransactionItem::ttUSER) + " "
                 "FROM " + m_TransactionsTblName + " "
             "UNION ALL "
             "SELECT Id, TransactionDate, Amount, "
-                    + TransactionStruct::getTextForEnum(TransactionStruct::ttINTERESTS) + " "
+                    + TransactionItem::getTextForEnum(TransactionItem::ttINTERESTS) + " "
                 "FROM " + m_InterestsTblName + " "
                 "ORDER BY TransactionDate;"
             >> [&](int id, std::string date, double amount, int type)
             {
-                transaction.id = id;
-                transaction.date = date;
-                transaction.amount = amount;
-                transaction.type = static_cast<TransactionStruct::Type>(type);
+                transaction.m_id = id;
+                transaction.m_date = date;
+                transaction.m_amount = amount;
+                transaction.m_type = static_cast<TransactionItem::Type>(type);
 
                 transactions.push_back(transaction);
             };

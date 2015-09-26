@@ -12,25 +12,14 @@ namespace sqlite
     class database;
 }
 class IAccountListener;
+class TransactionItem;
+
+typedef std::vector<TransactionItem> TransactionsList;
+
 
 class AccountHandle
 {
 public:
-    struct TransactionStruct
-    {
-        enum Type {ttUSER, ttINTERESTS};
-        static std::string getTextForEnum( Type enumVal )
-        {
-            static const char * EnumStrings[] = { "0", "1"};
-            return EnumStrings[enumVal];
-        }
-
-        double amount;
-        Date date;
-        int id;
-        Type type;
-    };
-
     AccountHandle(sqlite::database& db);
     virtual ~AccountHandle();
 
@@ -52,7 +41,7 @@ public:
     bool deposit(const Date&, double amount);
     bool deleteTransaction(int id);
     /*returns all transactions sorted by date*/
-    std::vector<TransactionStruct> getTransactions() const;
+    TransactionsList getTransactions() const;
 
     Date getOpenDate() const;
     double getPaidInterests() const;
