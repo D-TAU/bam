@@ -10,6 +10,7 @@
 #include <efl_extension.h>
 #include <sstream>
 #include <string>
+#include <iomanip>
 
 AccountController::AccountController(Application &app,  NaviFrame &naviFrame)
 	: NaviFrameItem()
@@ -48,19 +49,34 @@ void AccountController::updateView()
 {
 	std::ostringstream ss;
 
+	ss.precision(2);
+	ss.setf(std::ios::fixed);
+
 	ss << m_Account->getBalance();
 	m_pAccountView->setCurrentBalance(ss.str());
 
 	ss.str("");
+	ss << m_Account->getOpenDate().toStrFmt();
+	m_pAccountView->setOpenDate(ss.str());
+
+	ss.str("");
 	ss << m_Account->getInterestsRate();
 	m_pAccountView->setInterestsRate(ss.str());
+
+	ss.str("");
+	ss << m_Account->getPaidInterests();
+	m_pAccountView->setPaidInterests(ss.str());
+
+	ss.str("");
+	ss << m_Account->getAccruedInterests();
+	m_pAccountView->setAccruedInterests(ss.str());
 
 	std::vector<AccountHandle::TransactionStruct> tlist = m_Account->getTransactions();
 	std::vector<std::string> tlist_str;
 	for(size_t i = 0; i < tlist.size(); ++i)
 	{
 		ss.str("");
-		ss << tlist[i].date.toStrFmt() << " " << tlist[i].amount;
+		ss << "<color=#72ea78>" << tlist[i].date.toStrFmt() << "</color>" << " " << tlist[i].amount;
 		tlist_str.push_back(ss.str());
 	}
 	m_pAccountView->setTransactionsList(tlist_str);

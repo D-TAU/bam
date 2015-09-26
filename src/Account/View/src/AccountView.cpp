@@ -93,7 +93,7 @@ Evas_Object *AccountView::createInterestsRate(Evas_Object *parent)
 	evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, 0.5);
 
 	Evas_Object *label = elm_label_add(box);
-	elm_object_text_set(label, applyFontSize("Interests rate: ").c_str());
+	elm_object_text_set(label, applyFontSize("Annual interests rate: ").c_str());
 	evas_object_show(label);
 
 	m_pInterestsRateLabel = elm_label_add(box);
@@ -101,6 +101,72 @@ Evas_Object *AccountView::createInterestsRate(Evas_Object *parent)
 
 	elm_box_pack_end(box, label);
 	elm_box_pack_end(box, m_pInterestsRateLabel);
+
+	return box;
+}
+
+Evas_Object *AccountView::createOpenDate(Evas_Object *parent)
+{
+	Evas_Object *box = elm_box_add(parent);
+	evas_object_show(box);
+	elm_box_homogeneous_set(box, false);
+	elm_box_horizontal_set(box, true);
+	evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, 0.5);
+
+	Evas_Object *label = elm_label_add(box);
+	elm_object_text_set(label, applyFontSize("Open date: ").c_str());
+	evas_object_show(label);
+
+	m_pOpenDateLabel = elm_label_add(box);
+	evas_object_show(m_pOpenDateLabel);
+
+	elm_box_pack_end(box, label);
+	elm_box_pack_end(box, m_pOpenDateLabel);
+
+	return box;
+}
+
+Evas_Object *AccountView::createPaidInterests(Evas_Object *parent)
+{
+	Evas_Object *box = elm_box_add(parent);
+	evas_object_show(box);
+	elm_box_homogeneous_set(box, false);
+	elm_box_horizontal_set(box, true);
+	evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, 0.5);
+
+	Evas_Object *label = elm_label_add(box);
+	elm_object_text_set(label, applyFontSize("Paid interests: ").c_str());
+	evas_object_show(label);
+
+	m_pPaidInterestsLabel = elm_label_add(box);
+	evas_object_show(m_pPaidInterestsLabel);
+
+	elm_box_pack_end(box, label);
+	elm_box_pack_end(box, m_pPaidInterestsLabel);
+
+	return box;
+}
+
+Evas_Object *AccountView::createAccrInterests(Evas_Object *parent)
+{
+	Evas_Object *box = elm_box_add(parent);
+	evas_object_show(box);
+	elm_box_homogeneous_set(box, false);
+	elm_box_horizontal_set(box, true);
+	evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, 0.5);
+
+	Evas_Object *label = elm_label_add(box);
+	elm_object_text_set(label, applyFontSize("Accrued interests: ").c_str());
+	evas_object_show(label);
+
+	m_pAccrInterestsLabel = elm_label_add(box);
+	evas_object_show(m_pAccrInterestsLabel);
+
+	elm_box_pack_end(box, label);
+	elm_box_pack_end(box, m_pAccrInterestsLabel);
 
 	return box;
 }
@@ -123,11 +189,17 @@ Evas_Object *AccountView::createOverviewTabContent(Evas_Object *parent)
 	evas_object_size_hint_weight_set(contentBox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_size_hint_align_set(contentBox, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
+	Evas_Object *openDate = createOpenDate(contentBox);
 	Evas_Object *balance = createCurrentBalance(contentBox);
-	Evas_Object *interests = createInterestsRate(contentBox);
+	Evas_Object *interestsRate = createInterestsRate(contentBox);
+	Evas_Object *paidInterests = createPaidInterests(contentBox);
+	Evas_Object *accrInterests = createAccrInterests(contentBox);
 
+	elm_box_pack_end(contentBox, openDate);
 	elm_box_pack_end(contentBox, balance);
-	elm_box_pack_end(contentBox, interests);
+	elm_box_pack_end(contentBox, interestsRate);
+	elm_box_pack_end(contentBox, paidInterests);
+	elm_box_pack_end(contentBox, accrInterests);
 
 	return contentBox;
 }
@@ -151,8 +223,29 @@ void AccountView::setCurrentBalance(const std::string &str)
 void AccountView::setInterestsRate(const std::string &str)
 {
 	std::ostringstream ss;
-	ss << "<color=#72ea79><b>" << str << "</b></color>";
+	ss << "<color=#72ea79><b>" << str << "% </b></color>";
 	elm_object_text_set(m_pInterestsRateLabel, applyFontSize(ss.str()).c_str());
+}
+
+void AccountView::setAccruedInterests(const std::string &str)
+{
+	std::ostringstream ss;
+	ss << "<color=#72ea79><b>" << str << "</b></color>";
+	elm_object_text_set(m_pAccrInterestsLabel, applyFontSize(ss.str()).c_str());
+}
+
+void AccountView::setPaidInterests(const std::string &str)
+{
+	std::ostringstream ss;
+	ss << "<color=#72ea79><b>" << str << "</b></color>";
+	elm_object_text_set(m_pPaidInterestsLabel, applyFontSize(ss.str()).c_str());
+}
+
+void AccountView::setOpenDate(const std::string &str)
+{
+	std::ostringstream ss;
+	ss << "<color=#72ea79><b>" << str << "</b></color>";
+	elm_object_text_set(m_pOpenDateLabel, applyFontSize(ss.str()).c_str());
 }
 
 void AccountView::setTransactionsList(const std::vector<std::string>& tlist)

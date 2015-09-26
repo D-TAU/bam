@@ -54,6 +54,7 @@ public:
     /*returns all transactions sorted by date*/
     std::vector<TransactionStruct> getTransactions() const;
 
+    Date getOpenDate() const;
     double getPaidInterests() const;
     double getAccruedInterests() const;
     double getBalanceOn(const Date& date) const;

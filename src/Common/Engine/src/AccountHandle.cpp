@@ -257,6 +257,11 @@ double AccountHandle::getBalance() const
     return getBalanceOn(Date::today());
 }
 
+Date AccountHandle::getOpenDate() const
+{
+    return m_openDate;
+}
+
 Date AccountHandle::getInterestsPayoffDateAfter(const Date& date) const
 {
     Date result;
