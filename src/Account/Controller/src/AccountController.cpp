@@ -5,7 +5,7 @@
 #include "TransactionController.h"
 #include "CallbackAssist.h"
 #include "Application.h"
-#include "TransactionItem.h"
+#include "Transaction.h"
 
 
 #include <efl_extension.h>

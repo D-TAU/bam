@@ -1,7 +1,6 @@
 #include "AccountView.h"
-#include "TransactionItem.h"
-#include "AccountHandle.h"
 #include "CallbackAssist.h"
+#include "Transaction.h"
 
 #include <sstream>
 #include <cstdlib>
@@ -250,6 +249,7 @@ void AccountView::setOpenDate(const std::string &str)
 	elm_object_text_set(m_pOpenDateLabel, applyFontSize(ss.str()).c_str());
 }
 
+// TODO: move to controller
 void AccountView::setTransactionsList(const TransactionsList& tlist)
 {
 	std::ostringstream ss;
@@ -262,12 +262,12 @@ void AccountView::setTransactionsList(const TransactionsList& tlist)
 	for(size_t i = 0; i < tlist.size(); ++i)
 	{
 		ss.str("");
-		if(tlist[i].m_type == TransactionItem::ttUSER)
-			ss << "<color=#72ea78>" << tlist[i].m_date.toStrFmt() << " " << tlist[i].m_amount << "</color>";
-		else if(tlist[i].m_type == TransactionItem::ttINTERESTS)
-			ss << "<color=#909596>" << tlist[i].m_date.toStrFmt() << " " << tlist[i].m_amount << "</color>";
+		if(tlist[i].getType() == Transaction::ttUSER)
+			ss << "<color=#72ea78>" << tlist[i].getDate().toStrFmt() << " " << tlist[i].getAmount() << "</color>";
+		else if(tlist[i].getType() == Transaction::ttINTERESTS)
+			ss << "<color=#909596>" << tlist[i].getDate().toStrFmt() << " " << tlist[i].getAmount() << "</color>";
 		else
-			ss << "<color=#50ea78>" << tlist[i].m_date.toStrFmt() << " " << tlist[i].m_amount << "</color>";
+			ss << "<color=#50ea78>" << tlist[i].getDate().toStrFmt() << " " << tlist[i].getAmount() << "</color>";
 
 		elm_list_item_append(m_pTransactionsTabContent, ss.str().c_str(), nullptr, nullptr, nullptr, nullptr);
 	}

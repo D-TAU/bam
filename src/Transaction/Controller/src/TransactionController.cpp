@@ -7,9 +7,9 @@
 
 #include "Bam.h"
 #include "TransactionController.h"
-#include "AccountHandle.h"
+#include "Account.h"
 
-TransactionController::TransactionController(Application &app, NaviFrame &naviframe, AccountHandle &account)
+TransactionController::TransactionController(Application &app, NaviFrame &naviframe, Account &account)
 	: NaviFrameItem()
 	, m_App(app)
 	, m_NaviFrame(naviframe)

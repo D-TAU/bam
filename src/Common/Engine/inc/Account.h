@@ -4,24 +4,23 @@
 #include <string>
 #include <vector>
 #include <sqlite_modern_cpp.h>
-#include <AccountHandle.h>
-#include <Date.h>
+
+#include "Account.h"
+#include "Transaction.h"
+#include "Date.h"
 
 namespace sqlite
 {
     class database;
 }
 class IAccountListener;
-class TransactionItem;
-
-typedef std::vector<TransactionItem> TransactionsList;
 
 
-class AccountHandle
+class Account
 {
 public:
-    AccountHandle(sqlite::database& db);
-    virtual ~AccountHandle();
+    Account(sqlite::database& db);
+    virtual ~Account();
 
     bool create(const std::string& name,
             double interestsAnnualRate,

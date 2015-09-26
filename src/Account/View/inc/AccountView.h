@@ -8,7 +8,7 @@
 
 
 class AccountViewListener;
-class TransactionItem;
+class Transaction;
 
 class AccountView
 	: public View
@@ -28,7 +28,7 @@ public:
 	void setPaidInterests(const std::string &str);
 	void setAccruedInterests(const std::string &str);
 	void setOpenDate(const std::string &str);
-	void setTransactionsList(const std::vector<TransactionItem>& tlist);
+	void setTransactionsList(const std::vector<Transaction>& tlist);
 	std::string getInputMoney() const;
 	void setListener(AccountViewListener * l);
 

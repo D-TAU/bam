@@ -1,43 +1,53 @@
-#include "AccountHandle.h"
+#include "Account.h"
+#include "Transaction.h"
+#include "sqlite_modern_cpp.h"
+
 #include <iostream>
 #include <algorithm>
-#include <sqlite_modern_cpp.h>
-#include <TransactionItem.h>
 
-using namespace std;
-using namespace sqlite;
-
-AccountHandle::AccountHandle(database& db): m_db(db)
+namespace
 {
-	m_interestsRate = 0;
+	inline std::string transactionTypeToText(Transaction::Type enumVal )
+	{
+		static const char * EnumStrings[] = { "0", "1"};
+		return EnumStrings[enumVal];
+	}
 }
 
-AccountHandle::~AccountHandle()
+using namespace sqlite;
+
+Account::Account(database& db)
+	: m_db(db)
+	, m_interestsRate(0)
+{
+}
+
+Account::~Account()
 {
 }
 
 template<class...Args>
-void AccountHandle::notifyListeners(void (IAccountListener::*method)(Args...args), Args&&...args)
+void Account::notifyListeners(void (IAccountListener::*method)(Args...args), Args&&...args)
 {
     for(auto it : m_AccountListenerList)
         ((it)->*method)(args...);
 }
 
-void AccountHandle::addListener(IAccountListener &l)
+void Account::addListener(IAccountListener &l)
 {
     m_AccountListenerList.push_back(&l);
 }
 
-void AccountHandle::removeListener(IAccountListener &l)
+void Account::removeListener(IAccountListener &l)
 {
     auto it = std::find(m_AccountListenerList.begin(), m_AccountListenerList.end(), &l);
     if(it != m_AccountListenerList.end())
         m_AccountListenerList.erase(it);
 }
 
-bool AccountHandle::create(const std::string& name,
+bool Account::create(const std::string& name,
             double interestsAnnualRate,
-            const string& interestPayoffDay,
+            const std::string& interestPayoffDay,
             const Date& openDate,
             double initialBalance)
 {
@@ -64,9 +74,9 @@ bool AccountHandle::create(const std::string& name,
     return true;
 }
 
-bool AccountHandle::open(const std::string& name,
+bool Account::open(const std::string& name,
             double interestsAnnualRate,
-            const string& interestPayoffDay,
+            const std::string& interestPayoffDay,
             const Date& openDate)
 {
     m_name                  = name;
@@ -87,7 +97,7 @@ bool AccountHandle::open(const std::string& name,
     return true;
 }
 
-bool AccountHandle::deposit(const Date& date, double amount)
+bool Account::deposit(const Date& date, double amount)
 {
     if(date >= m_openDate)
     {
@@ -101,7 +111,7 @@ bool AccountHandle::deposit(const Date& date, double amount)
         return false;
 }
 
-bool AccountHandle::withdraw(const Date& date, double amount)
+bool Account::withdraw(const Date& date, double amount)
 {
     double balance = getBalanceOn(date);
 
@@ -118,14 +128,14 @@ bool AccountHandle::withdraw(const Date& date, double amount)
         return false;
 }
 
-void AccountHandle::createTables()
+void Account::createTables()
 {
     createBalancesTable();
     createTransactionsTable();
     createInterestsTable();
 }
 
-void AccountHandle::createBalancesTable()
+void Account::createBalancesTable()
 {
     m_db <<
         "CREATE TABLE IF NOT EXISTS " + m_BalancesTblName +
@@ -136,7 +146,7 @@ void AccountHandle::createBalancesTable()
         ");";
 }
 
-void AccountHandle::createTransactionsTable()
+void Account::createTransactionsTable()
 {
     m_db <<
         "CREATE TABLE IF NOT EXISTS " + m_TransactionsTblName +
@@ -148,7 +158,7 @@ void AccountHandle::createTransactionsTable()
         ");";
 }
 
-void AccountHandle::createInterestsTable()
+void Account::createInterestsTable()
 {
     m_db << "CREATE TABLE IF NOT EXISTS " + m_InterestsTblName + " "
         "("
@@ -159,7 +169,7 @@ void AccountHandle::createInterestsTable()
         ");";
 }
 
-void AccountHandle::createTriggers()
+void Account::createTriggers()
 {
     createOnInterestsInsertTrigger();
     createOnTransactionInsertTrigger();
@@ -167,9 +177,9 @@ void AccountHandle::createTriggers()
     createOnInterestsUpdateTrigger();
 }
 
-void AccountHandle::createOnInterestsInsertTrigger()
+void Account::createOnInterestsInsertTrigger()
 {
-    string trigName = m_name + "OnInterestsInsert";
+	std::string trigName = m_name + "OnInterestsInsert";
     m_db << "CREATE TRIGGER IF NOT EXISTS " + trigName + " AFTER INSERT ON " + m_InterestsTblName + " "
     "BEGIN "
         "INSERT OR IGNORE INTO " + m_BalancesTblName + "(OnDate, Balance, DeltaDays) "
@@ -194,9 +204,9 @@ void AccountHandle::createOnInterestsInsertTrigger()
     "END;";
 }
 
-void AccountHandle::createOnTransactionInsertTrigger()
+void Account::createOnTransactionInsertTrigger()
 {
-    string trigName = m_name + "OnTransactionInsert";
+	std::string trigName = m_name + "OnTransactionInsert";
     m_db << "CREATE TRIGGER IF NOT EXISTS " + trigName + " AFTER INSERT ON  " + m_TransactionsTblName + " "
     "BEGIN "
         "INSERT OR IGNORE INTO " + m_BalancesTblName + "(OnDate, Balance, DeltaDays) "
@@ -220,9 +230,9 @@ void AccountHandle::createOnTransactionInsertTrigger()
     "END;";
 }
 
-void AccountHandle::createOnTransactionDeleteTrigger()
+void Account::createOnTransactionDeleteTrigger()
 {
-    string trigName = m_name + "OnTransactionDelete";
+	std::string trigName = m_name + "OnTransactionDelete";
     m_db << "CREATE TRIGGER IF NOT EXISTS " + trigName + " AFTER DELETE ON  " + m_TransactionsTblName + " "
     "BEGIN "
         "UPDATE " + m_BalancesTblName + " SET Balance = Balance - old.amount "
@@ -230,9 +240,9 @@ void AccountHandle::createOnTransactionDeleteTrigger()
     "END;";
 }
 
-void AccountHandle::createOnInterestsUpdateTrigger()
+void Account::createOnInterestsUpdateTrigger()
 {
-    string trigName = m_name + "OnInterestsUpdate";
+	std::string trigName = m_name + "OnInterestsUpdate";
     m_db << "CREATE TRIGGER IF NOT EXISTS " + trigName + " AFTER UPDATE ON " + m_InterestsTblName + " "
         "BEGIN "
             "UPDATE " + m_BalancesTblName + " SET Balance = Balance + (new.amount - old.amount) "
@@ -240,7 +250,7 @@ void AccountHandle::createOnInterestsUpdateTrigger()
         "END;";
 }
 
-double AccountHandle::getBalanceOn(const Date& date) const
+double Account::getBalanceOn(const Date& date) const
 {
     double result = 0;
 
@@ -254,20 +264,20 @@ double AccountHandle::getBalanceOn(const Date& date) const
     return result;
 }
 
-double AccountHandle::getBalance() const
+double Account::getBalance() const
 {
     return getBalanceOn(Date::today());
 }
 
-Date AccountHandle::getOpenDate() const
+Date Account::getOpenDate() const
 {
     return m_openDate;
 }
 
-Date AccountHandle::getInterestsPayoffDateAfter(const Date& date) const
+Date Account::getInterestsPayoffDateAfter(const Date& date) const
 {
     Date result;
-    string dateStr = date.toStrFmt();
+    std::string dateStr = date.toStrFmt();
     /*replace days field with interests payoff day*/
     result = dateStr.replace(dateStr.end()-2, dateStr.end(), m_interestsPayoffDay);
     if(result <= date)
@@ -276,13 +286,13 @@ Date AccountHandle::getInterestsPayoffDateAfter(const Date& date) const
     return result;
 }
 
-Date AccountHandle::getLastInterestsPayoffDateBefore(const Date& date) const
+Date Account::getLastInterestsPayoffDateBefore(const Date& date) const
 {
-    string dateStr = "";
+	std::string dateStr = "";
     m_db << "SELECT TransactionDate FROM " + m_InterestsTblName + " "
                     "WHERE TransactionDate = (SELECT Max(TransactionDate) FROM " + m_InterestsTblName + " "
                         "WHERE TransactionDate < " + date.toSqlFmt() + ");"
-            >> [&dateStr](string tdate)
+            >> [&dateStr](std::string tdate)
                 {
                     dateStr = tdate;
                 };
@@ -291,7 +301,7 @@ Date AccountHandle::getLastInterestsPayoffDateBefore(const Date& date) const
         Date openDate;
         //find first balance field date
         m_db << "SELECT Min(OnDate) FROM " + m_BalancesTblName
-                >> [&openDate](string ondate)
+                >> [&openDate](std::string ondate)
                 {
                     openDate = ondate;
                 };
@@ -303,12 +313,12 @@ Date AccountHandle::getLastInterestsPayoffDateBefore(const Date& date) const
         return dateStr;
 }
 
-void AccountHandle::updateInterestsTable()
+void Account::updateInterestsTable()
 {
     updateInterestsTableAfter(Date::today());
 }
 
-void AccountHandle::updateInterestsTableAfter(const Date& somedate)
+void Account::updateInterestsTableAfter(const Date& somedate)
 {
     Date date, today, nextDate, lastDate;
     const double percentagePerDay = m_interestsRate / 100 / 365;
@@ -326,7 +336,7 @@ void AccountHandle::updateInterestsTableAfter(const Date& somedate)
         lastDate = date;
         m_db << "SELECT OnDate, Balance, DeltaDays FROM " + m_BalancesTblName + " "
                 "WHERE OnDate BETWEEN " + date.toSqlFmt() + " AND " + nextDate.toSqlFmt()
-                >> [&](string onDate, double bal, int ddays)
+                >> [&](std::string onDate, double bal, int ddays)
                 {
                     interests += interestsPerDay * ddays;
                     interestsPerDay = bal * percentagePerDay;
@@ -342,7 +352,7 @@ void AccountHandle::updateInterestsTableAfter(const Date& somedate)
     }
 }
 
-void AccountHandle::upsertInterests(const Date& date, double amount)
+void Account::upsertInterests(const Date& date, double amount)
 {
     m_db << "INSERT OR IGNORE INTO " + m_InterestsTblName + "(TransactionDate, Amount) VALUES(?,  ?);"
         << date.toStrFmt() << 0;
@@ -351,7 +361,7 @@ void AccountHandle::upsertInterests(const Date& date, double amount)
             << amount;
 }
 
-bool AccountHandle::exists() const
+bool Account::exists() const
 {
     const size_t NB_TABLES = 3;
     const size_t NB_TRIGGERS = 4;
@@ -383,14 +393,14 @@ bool AccountHandle::exists() const
     return (tablesExist and triggersExist);
 }
 
-bool AccountHandle::deleteTransaction(int id)
+bool Account::deleteTransaction(int id)
 {
     Date date;
 
     /*select transaction with given id and memorize its date*/
     m_db << "SELECT TransactionDate FROM " + m_TransactionsTblName + " "
                 "WHERE Id = (?);" << id
-            >> [&date](string str)
+            >> [&date](std::string str)
                 {
                     date = str;
                 };
@@ -404,22 +414,22 @@ bool AccountHandle::deleteTransaction(int id)
     return true;
 }
 
-const std::string& AccountHandle::getName() const
+const std::string& Account::getName() const
 {
     return m_name;
 }
 
-const std::string& AccountHandle::getInterestsPayoffDay() const
+const std::string& Account::getInterestsPayoffDay() const
 {
     return m_interestsPayoffDay;
 }
 
-double AccountHandle::getInterestsRate() const
+double Account::getInterestsRate() const
 {
     return m_interestsRate;
 }
 
-double AccountHandle::getPaidInterests() const
+double Account::getPaidInterests() const
 {
     double result = 0;
 
@@ -432,7 +442,7 @@ double AccountHandle::getPaidInterests() const
     return result;
 }
 
-double AccountHandle::getAccruedInterests() const
+double Account::getAccruedInterests() const
 {
     double interests = 0;
     Date date, today, lastDate;
@@ -445,7 +455,7 @@ double AccountHandle::getAccruedInterests() const
 
     m_db << "SELECT OnDate, Balance, DeltaDays FROM " + m_BalancesTblName + " "
                     "WHERE OnDate BETWEEN " + date.toSqlFmt() + " AND " + today.toSqlFmt()
-                        >> [&](string onDate, double bal, int ddays)
+                        >> [&](std::string onDate, double bal, int ddays)
                             {
                                 interests += interestsPerDay * ddays;
                                 interestsPerDay = bal * percentagePerDay;
@@ -456,25 +466,25 @@ double AccountHandle::getAccruedInterests() const
     return interests;
 }
 
-TransactionsList AccountHandle::getTransactions() const
+TransactionsList Account::getTransactions() const
 {
     TransactionsList transactions;
-    TransactionItem transaction;
+    Transaction transaction;
 
     m_db << "SELECT Id, TransactionDate, Amount, "
-                    + TransactionItem::getTextForEnum(TransactionItem::ttUSER) + " "
+                    + transactionTypeToText(Transaction::ttUSER) + " "
                 "FROM " + m_TransactionsTblName + " "
             "UNION ALL "
             "SELECT Id, TransactionDate, Amount, "
-                    + TransactionItem::getTextForEnum(TransactionItem::ttINTERESTS) + " "
+                    + transactionTypeToText(Transaction::ttINTERESTS) + " "
                 "FROM " + m_InterestsTblName + " "
                 "ORDER BY TransactionDate;"
             >> [&](int id, std::string date, double amount, int type)
             {
-                transaction.m_id = id;
-                transaction.m_date = date;
-                transaction.m_amount = amount;
-                transaction.m_type = static_cast<TransactionItem::Type>(type);
+                transaction.m_Id = id;
+                transaction.m_Date = date;
+                transaction.m_Amount = amount;
+                transaction.m_Type = static_cast<Transaction::Type>(type);
 
                 transactions.push_back(transaction);
             };

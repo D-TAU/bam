@@ -14,14 +14,14 @@
 #include "Date.h"
 
 class Application;
-class AccountHandle;
+class Account;
 
 class TransactionController
 		: public NaviFrameItem
 		, private TransactionViewListener
 {
 public:
-	TransactionController(Application &app, NaviFrame &naviframe, AccountHandle& account);
+	TransactionController(Application &app, NaviFrame &naviframe, Account& account);
 
 private:
 	// Destructor
@@ -43,7 +43,7 @@ private:
 private:
 	Application &m_App;
 	NaviFrame &m_NaviFrame;
-	AccountHandle &m_Account;
+	Account &m_Account;
 	TransactionView *m_pTransactionView;
 };
 
