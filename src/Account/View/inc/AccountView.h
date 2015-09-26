@@ -4,6 +4,7 @@
 
 #include "View.h"
 #include <string>
+#include <vector>
 
 
 class AccountViewListener;
@@ -23,6 +24,7 @@ public:
 	AccountView(Evas_Object *parent);
 	void setCurrentBalance(const std::string &str);
 	void setInterestsRate(const std::string &str);
+	void setTransactionsList(const std::vector<std::string>& tlist);
 	std::string getInputMoney() const;
 	void setListener(AccountViewListener * l);
 

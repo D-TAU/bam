@@ -134,26 +134,11 @@ Evas_Object *AccountView::createOverviewTabContent(Evas_Object *parent)
 
 Evas_Object *AccountView::createTransactionsTabContent(Evas_Object *parent)
 {
-	Evas_Object * contentBox = elm_box_add(parent);
-	evas_object_size_hint_weight_set(contentBox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(contentBox, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
-	//FIXME: insert here real transactions
-	Evas_Object *list = elm_list_add(contentBox);
+	Evas_Object *list = elm_list_add(parent);
 	evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_box_pack_end(contentBox, list);
 
-	//FIXME: arbitrary items in the list
-	elm_list_item_append(list, "Transaction 1", nullptr, nullptr, nullptr, nullptr);
-	elm_list_item_append(list, "Transaction 2", nullptr, nullptr, nullptr, nullptr);
-	elm_list_item_append(list, "Transaction N", nullptr, nullptr, nullptr, nullptr);
-	/* enable multiple selection and always select */
-
-	elm_list_go(list);
-	evas_object_show(list);
-
-	return contentBox;
+	return list;
 }
 
 void AccountView::setCurrentBalance(const std::string &str)
@@ -168,6 +153,17 @@ void AccountView::setInterestsRate(const std::string &str)
 	std::ostringstream ss;
 	ss << "<color=#72ea79><b>" << str << "</b></color>";
 	elm_object_text_set(m_pInterestsRateLabel, applyFontSize(ss.str()).c_str());
+}
+
+void AccountView::setTransactionsList(const std::vector<std::string>& tlist)
+{
+	/*clear list from previously added items: prevent repeating*/
+	elm_list_clear(m_pTransactionsTabContent);
+	for(size_t i = 0; i < tlist.size(); ++i)
+		elm_list_item_append(m_pTransactionsTabContent, tlist[i].c_str(), nullptr, nullptr, nullptr, nullptr);
+
+	elm_list_go(m_pTransactionsTabContent);
+	evas_object_show(m_pTransactionsTabContent);
 }
 
 void AccountView::onTransactButtonClicked(Evas_Object *btn, void *eventInfo)

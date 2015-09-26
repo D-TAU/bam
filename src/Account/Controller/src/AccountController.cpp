@@ -54,6 +54,16 @@ void AccountController::updateView()
 	ss.str("");
 	ss << m_Account->getInterestsRate();
 	m_pAccountView->setInterestsRate(ss.str());
+
+	std::vector<AccountHandle::TransactionStruct> tlist = m_Account->getTransactions();
+	std::vector<std::string> tlist_str;
+	for(size_t i = 0; i < tlist.size(); ++i)
+	{
+		ss.str("");
+		ss << tlist[i].date.toStrFmt() << " " << tlist[i].amount;
+		tlist_str.push_back(ss.str());
+	}
+	m_pAccountView->setTransactionsList(tlist_str);
 }
 
 void AccountController::onButtonClicked(AccountView &view, AccountView::ButtonId buttonId)
