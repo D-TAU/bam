@@ -18,7 +18,6 @@ AccountController::AccountController(Application &app,  NaviFrame &naviFrame)
 	, m_App(app)
 	, m_NaviFrame(naviFrame)
 {
-	app.getEngine().setCurrentAccount(0);//FIXME this should be done in another place
 	m_Account = app.getEngine().getCurrentAccount();
 
 	m_pAccountView = new AccountView(m_NaviFrame);

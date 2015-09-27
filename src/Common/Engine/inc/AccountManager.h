@@ -1,32 +1,48 @@
-/*
- * AccountManager.h
- *
- *  Created on: Sep 1, 2015
- *      Author: vifactor
- */
+#ifndef ACCOUNTMANAGER_H
+#define ACCOUNTMANAGER_H
 
-#ifndef ACCOUNTMANAGER_H_
-#define ACCOUNTMANAGER_H_
+#include <string>
+#include <map>
 
-namespace sqlite
-{
-    class database;
-};
+class Date;
 class Account;
+namespace sqlite{
+    class database;
+}
 
 class AccountManager
 {
 public:
-	AccountManager();
-	virtual ~AccountManager();
+    struct AccountProps
+    {
+        AccountProps(const std::string& name):
+            m_name(name)
+                {}
+        std::string m_name;
+    };
+    typedef std::map<int, AccountProps> AccountsMap;
 
-	Account * getCurrentAccount() const;
-	void setCurrentAccount(int id);
+    AccountManager();
+    virtual ~AccountManager();
+
+    void setCurrentAccount(int id);
+    Account* getCurrentAccount();
+    //returns an id of newly created account
+    int createAccount(const std::string& name, double irate,
+                                const std::string & pday, const Date& odate, double ibalance);
+    const AccountsMap& getAccountsMap() const;
 private:
-	/*accounts database*/
-	sqlite::database *m_db;
-	/*pointer to current account*/
-	Account * m_pAccount;
+    void createAccountsTable();
+    void populateAccountsMap();
+    void openAccount(int id);
+    //returns an id of newly created account or 0 if account with such name exists
+    int insertAccount(const std::string& name, double irate,
+                                const std::string & pday, const Date& odate);
+private:
+    Account * m_pAccount;
+    sqlite::database * m_db;
+    std::string m_dbTblName;
+    AccountsMap m_accountsMap;
 };
 
-#endif /* ACCOUNTMANAGER_H_ */
+#endif // ACCOUNTMANAGER_H
