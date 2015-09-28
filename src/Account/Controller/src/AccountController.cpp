@@ -18,7 +18,8 @@ AccountController::AccountController(Application &app,  NaviFrame &naviFrame)
 	, m_App(app)
 	, m_NaviFrame(naviFrame)
 {
-	m_Account = app.getEngine().getCurrentAccount();
+	//TODO: change it passing account as an argument
+	m_Account = app.getEngine().getAccountsList().back().get();
 
 	m_pAccountView = new AccountView(m_NaviFrame);
 	m_pAccountView->setListener(this);

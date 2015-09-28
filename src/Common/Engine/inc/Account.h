@@ -51,6 +51,8 @@ public:
     const std::string& getName() const;
     const std::string& getInterestsPayoffDay() const;
     double getInterestsRate() const;
+    int getId() const;
+    void setId(unsigned int id);
 private:
     typedef std::vector<IAccountListener*> AccountListenerList;
     
@@ -59,14 +61,15 @@ private:
     double m_interestsRate;
     std::string m_interestsPayoffDay;
     Date m_openDate;
-
-    Date getLastInterestsPayoffDateBefore(const Date& date) const;
+    /*account id set up by an account manager*/
+    int m_id;
 
     std::string m_BalancesTblName;
     std::string m_InterestsTblName;
     std::string m_TransactionsTblName;
     AccountListenerList m_AccountListenerList;
 
+    Date getLastInterestsPayoffDateBefore(const Date& date) const;
     /*checks whether AccountHandle already exists in the database*/
     bool exists() const;
 

@@ -87,8 +87,7 @@ bool Application::onAppCreate()
 	m_pAccountManager = new AccountManager();
 
 	/*TODO: change it when UI for account creation is implemented*/
-	m_pAccountManager->createAccount("Default", 4.40, "20", Date("2015-05-01"), 3.0);
-	m_pAccountManager->setCurrentAccount(1);
+	m_pAccountManager->addAccount("Default", 4.40, "20", Date("2015-05-01"), 3.0);
 	/*TODO: End*/
 
 	// Create AccountController

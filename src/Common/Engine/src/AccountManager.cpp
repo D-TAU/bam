@@ -8,17 +8,15 @@ using namespace std;
 AccountManager::AccountManager()
 {
     m_db = new database(":memory:");// FIXME: change to file-based database
-    m_pAccount = new Account(*m_db);
 
     //creates accounts table if it did not exist
     createAccountsTable();
     //populate accounts list
-    populateAccountsMap();
+    populateAccountsList();
 }
 
 AccountManager::~AccountManager()
 {
-    delete m_pAccount;
     delete m_db;
 }
 
@@ -36,34 +34,24 @@ void AccountManager::createAccountsTable()
         ");";
 }
 
-void AccountManager::populateAccountsMap()
+void AccountManager::populateAccountsList()
 {
-    (*m_db) << "SELECT Id, Name FROM " + m_dbTblName + ";"
-            >> [&](int id, string name)
-                {
-                    this->m_accountsMap.insert(AccountsMap::value_type (id, AccountProps(name)));
-                };
+	(*m_db) << "SELECT Id, Name, OpenDate, InterestsRate, PayoffDay FROM " + m_dbTblName + ";"
+	            >> [&](int id, string name, string odate, double irate, string pday)
+	                {
+						std::unique_ptr<Account> pAccount(new Account(*m_db));
+						pAccount->setId(id);
+						pAccount->open(name, irate, pday, odate);
+						m_accountsList.push_back(std::move(pAccount));
+	                };
 }
 
-const AccountManager::AccountsMap& AccountManager::getAccountsMap() const
+const AccountsList& AccountManager::getAccountsList() const
 {
-    return m_accountsMap;
+    return m_accountsList;
 }
 
-void AccountManager::setCurrentAccount(int id)
-{
-    if(m_accountsMap.find(id) == m_accountsMap.end())
-        m_pAccount = nullptr;
-    else
-    	openAccount(id);
-}
-
-Account* AccountManager::getCurrentAccount()
-{
-    return m_pAccount;
-}
-
-int AccountManager::createAccount(const string& name, double irate,
+Account * AccountManager::addAccount(const string& name, double irate,
                                 const string & pday, const Date& odate, double ibalance)
 {
     //try to insert account into the accounts table
@@ -72,13 +60,17 @@ int AccountManager::createAccount(const string& name, double irate,
     // check if account props were inserted into accounts table
     if(id > 0)
     {
+    	std::unique_ptr<Account> pAccount(new Account(*m_db));
         //create and populate account's tables
-        m_pAccount->create(name, irate, pday, odate, ibalance);
-        //append account to the accounts map
-        m_accountsMap.insert(AccountsMap::value_type (id, AccountProps(name)));
-    }
+        pAccount->create(name, irate, pday, odate, ibalance);
+        pAccount->setId(id);
+        //append accounts list
+        m_accountsList.push_back(std::move(pAccount));
 
-    return id;
+        return m_accountsList.back().get();
+    }
+    else
+    	return nullptr;
 }
 
 int AccountManager::insertAccount(const string& name, double irate,
@@ -95,19 +87,6 @@ int AccountManager::insertAccount(const string& name, double irate,
                 {
                     ID = id;
                 };
-    //check if id existed in the list of accounts: row was not created
-    if(m_accountsMap.find(ID) != m_accountsMap.end())
-        ID = 0;
 
     return ID;
-}
-
-void AccountManager::openAccount(int id)
-{
-    (*m_db) << "SELECT Name, OpenDate, InterestsRate, PayoffDay FROM " + m_dbTblName
-            + " WHERE Id = (?);" << id
-            >> [&](string name, string odate, double irate, string pday)
-                {
-                    this->m_pAccount->open(name, irate, pday, odate);
-                };
 }

@@ -19,6 +19,7 @@ using namespace sqlite;
 Account::Account(database& db)
 	: m_db(db)
 	, m_interestsRate(0)
+	, m_id(-1)
 {
 }
 
@@ -427,6 +428,16 @@ const std::string& Account::getInterestsPayoffDay() const
 double Account::getInterestsRate() const
 {
     return m_interestsRate;
+}
+
+int Account::getId() const
+{
+	return m_id;
+}
+
+void Account::setId(unsigned int id)
+{
+	m_id = id;
 }
 
 double Account::getPaidInterests() const
