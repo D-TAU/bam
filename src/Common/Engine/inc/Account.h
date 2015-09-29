@@ -19,6 +19,8 @@ class IAccountListener;
 class Account
 {
 public:
+	friend class AccountManager;
+
     Account(sqlite::database& db);
     virtual ~Account();
 
@@ -27,10 +29,6 @@ public:
             const std::string& interestPayoffDay,
             const Date& openDate,
             double initialBalance = 0);
-    bool open(const std::string& name,
-            double interestsAnnualRate,
-            const std::string& interestPayoffDay,
-            const Date& openDate);
             
     void addListener(IAccountListener &l);
     void removeListener(IAccountListener &l);
@@ -68,6 +66,11 @@ private:
     std::string m_InterestsTblName;
     std::string m_TransactionsTblName;
     AccountListenerList m_AccountListenerList;
+
+    bool open(const std::string& name,
+                double interestsAnnualRate,
+                const std::string& interestPayoffDay,
+                const Date& openDate);
 
     Date getLastInterestsPayoffDateBefore(const Date& date) const;
     /*checks whether AccountHandle already exists in the database*/
