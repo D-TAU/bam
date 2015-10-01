@@ -23,12 +23,6 @@ public:
 
     Account(sqlite::database& db);
     virtual ~Account();
-
-    bool create(const std::string& name,
-            double interestsAnnualRate,
-            const std::string& interestPayoffDay,
-            const Date& openDate,
-            double initialBalance = 0);
             
     void addListener(IAccountListener &l);
     void removeListener(IAccountListener &l);
@@ -40,15 +34,18 @@ public:
     /*returns all transactions sorted by date*/
     TransactionsList getTransactions() const;
 
-    Date getOpenDate() const;
-    double getPaidInterests() const;
-    double getAccruedInterests() const;
-    double getBalanceOn(const Date& date) const;
-    double getBalance() const;
-    Date getInterestsPayoffDateAfter(const Date& date) const;
-    const std::string& getName() const;
-    const std::string& getInterestsPayoffDay() const;
-    double getInterestsRate() const;
+    Date getOpenDate() const; 					/*date when account was created (open)*/
+    double getPaidInterests() const;			/*how much interests were already paid since account was created*/
+    double getAccruedInterests() const;			/*how much interests has been accrued (but not paid)
+     	 	 	 	 	 	 	 	 	  	  	  since last interests payoff*/
+    double getBalanceOn(const Date& date) const;/*what was account balance on 'date'*/
+    double getBalance() const;					/*what is current balance ('date' = today)*/
+    Date getInterestsPayoffDateAfter(
+    					const Date& date) const;/*when will be the next interests payoff after 'date'*/
+    const std::string& getName() const;			/*account name*/
+    const std::string&
+    			getInterestsPayoffDay() const;	/*at which day of a month interests are paid*/
+    double getInterestsRate() const;			/*annual interests rate (percentage)*/
     int getId() const;
     void setId(unsigned int id);
 private:
@@ -56,11 +53,11 @@ private:
     
     sqlite::database& m_db;
     std::string m_name;
+    /*annual interests rate*/
     double m_interestsRate;
     std::string m_interestsPayoffDay;
     Date m_openDate;
-    /*account id set up by an account manager*/
-    int m_id;
+    int m_id;							/*account id, set up by an account manager*/
 
     std::string m_BalancesTblName;
     std::string m_InterestsTblName;
@@ -71,9 +68,14 @@ private:
                 double interestsAnnualRate,
                 const std::string& interestPayoffDay,
                 const Date& openDate);
+    bool create(const std::string& name,
+                double interestsAnnualRate,
+                const std::string& interestPayoffDay,
+                const Date& openDate,
+                double initialBalance = 0);
 
     Date getLastInterestsPayoffDateBefore(const Date& date) const;
-    /*checks whether AccountHandle already exists in the database*/
+    /*checks whether Account tables already exist in the database*/
     bool exists() const;
 
     void createTables();
